@@ -1,0 +1,5 @@
+predelat na list polygonu
+for pol in pols:
+    res = analyze(q,pol)
+results = [vsechny true polygony]
+pokud polygon v results, vykresli se jinak - zvyrazni ze bod je v nem
