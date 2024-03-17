@@ -1,7 +1,9 @@
 from PyQt6.QtCore import *
 from PyQt6.QtGui import *
-from PyQt6.QtGui import QMouseEvent, QPaintEvent
 from PyQt6.QtWidgets import *
+import geopandas as gpd
+import numpy as np
+from math import inf
 
 class Draw(QWidget):
 
@@ -9,7 +11,48 @@ class Draw(QWidget):
         super().__init__(*args, **kwargs)
         self.q = QPointF(-100, -100)
         self.pol = QPolygonF() # list of QPointFs 
+        self.list_of_pols = []
         self.add_vertex =  True
+        
+    def loadData(self):
+        data = gpd.read_file("okresy\Okresy_-_polygony.shp")
+        polygony = data.geometry
+        list_of_pols = []
+        for index, pol in enumerate(polygony):
+            g = []
+            for i in polygony:
+                g.append(i)
+            if pol.geom_type == "Polygon":
+                x,y = g[index].exterior.coords.xy
+            else:
+                x,y = g[index].convex_hull.exterior.coords.xy  
+            coords = np.dstack((x,y)).tolist()
+            for i in coords[0]:
+                p = QPointF(i[0],-i[1])
+                self.pol.append(p)
+            list_of_pols.append(self.pol)
+        xmin = inf
+        ymin = inf
+        xmax = -inf
+        ymax = -inf
+        for p in self.pol:
+            if p.x() < xmin:
+                xmin = p.x()
+            if p.y() < ymin:
+                ymin = p.y()
+            if p.x() > xmax:
+                xmax = p.x()
+            if p.y() > ymax:
+                ymax = p.y()
+        height = self.frameGeometry().height()
+        width = self.frameGeometry().width()
+        for point in self.pol:
+            new_x = int((point.x() - xmin) * width/(xmax - xmin))
+            new_y = int((point.y() - ymin) * height/(ymax - ymin))
+            point.setX(new_x)
+            point.setY(new_y)
+        self.repaint()
+        
         
     def mousePressEvent(self, e: QMouseEvent):
         # get coordinates
@@ -45,6 +88,8 @@ class Draw(QWidget):
         qp.setBrush(Qt.GlobalColor.magenta)
         
         # draw polygon
+        # for pol in range(len(self.list_of_pols)):
+        #     qp.drawPolygon(self.list_of_pols[pol])
         qp.drawPolygon(self.pol)
         
         # set graphical attributes
