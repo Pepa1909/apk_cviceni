@@ -95,7 +95,13 @@ class Ui_MainWindow(object):
         
     def openClick(self):
         self.Canvas.clearData()
-        self.Canvas.loadData()
+        data = self.loadData()
+        self.Canvas.loadData(data)
+        
+    def loadData(self):
+        file, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input/files/.", filter="Shapefile (*.shp)")
+        data = gpd.read_file(file)
+        return data
         
     def pointPolygonClick(self):
         # draw point or add vertex
@@ -112,20 +118,23 @@ class Ui_MainWindow(object):
         pol = self.Canvas.getPol()
         
         # analysis
-        a = Algorithms()
-        res = a.analyzePointPolygonPosition(q,pol)
+        for i, polyg in enumerate(pol):
+            res = Algorithms.analyzePointPolygonPosition(self, q, polyg)
+            self.Canvas.polyg_status[i] = res
         
         # show result
         mb = QtWidgets.QMessageBox()
         mb.setWindowTitle("Analyze point and polygon position")
         
         # point inside
-        if res:
-            mb.setText("Point inside polygon")
+        for i in self.Canvas.polyg_status:
+            if i:
+                mb.setText("Point inside polygon")
+                break
             
         # point outside
-        else:
-            mb.setText("Point outside polygon")
+            else:
+                mb.setText("Point outside polygon")
             
         # show window    
         mb.exec()

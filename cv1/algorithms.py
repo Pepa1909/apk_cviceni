@@ -10,7 +10,7 @@ class Algorithms:
     def analyzePointPolygonPosition(self, q:QPointF, pol:QPolygonF):
         # inicialize intersection amount
         k = 0
-         
+        
         # amount of vertices
         n = len(pol)
          
