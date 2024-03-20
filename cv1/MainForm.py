@@ -42,12 +42,6 @@ class Ui_MainWindow(object):
         icon1.addPixmap(QtGui.QPixmap("images/icons/exit.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionexit.setIcon(icon1)
         self.actionexit.setObjectName("actionexit")
-        self.actionPolygon = QtGui.QAction(parent=MainWindow)
-        self.actionPolygon.setCheckable(True)
-        icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("images/icons/pointpol.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionPolygon.setIcon(icon2)
-        self.actionPolygon.setObjectName("actionPolygon")
         self.actionClear = QtGui.QAction(parent=MainWindow)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap("images/icons/clear_all.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
@@ -65,7 +59,6 @@ class Ui_MainWindow(object):
         self.actionWinding_Number.setObjectName("actionWinding_Number")
         self.menuzadejte_soubor.addAction(self.actionopen)
         self.menuzadejte_soubor.addAction(self.actionexit)
-        self.menuInput.addAction(self.actionPolygon)
         self.menuInput.addSeparator()
         self.menuInput.addAction(self.actionClear)
         self.menuAnalyze.addAction(self.actionRay_Crossing)
@@ -74,8 +67,6 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuInput.menuAction())
         self.menubar.addAction(self.menuAnalyze.menuAction())
         self.toolBar.addAction(self.actionopen)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionPolygon)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionRay_Crossing)
         self.toolBar.addAction(self.actionWinding_Number)
@@ -90,7 +81,6 @@ class Ui_MainWindow(object):
         self.actionClear.triggered.connect(self.clearClick) # type: ignore
         self.actionWinding_Number.triggered.connect(self.windingNumberClick) # type: ignore
         self.actionRay_Crossing.triggered.connect(self.rayCrossingClick) # type: ignore
-        self.actionPolygon.triggered.connect(self.pointPolygonClick) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
     def openClick(self):
@@ -153,8 +143,6 @@ class Ui_MainWindow(object):
         self.actionopen.setToolTip(_translate("MainWindow", "Open file"))
         self.actionexit.setText(_translate("MainWindow", "Exit"))
         self.actionexit.setToolTip(_translate("MainWindow", "Close app"))
-        self.actionPolygon.setText(_translate("MainWindow", "Point/Polygon"))
-        self.actionPolygon.setToolTip(_translate("MainWindow", "Input point/polygon vertex"))
         self.actionClear.setText(_translate("MainWindow", "Clear"))
         self.actionRay_Crossing.setText(_translate("MainWindow", "Ray Crossing Algorithm"))
         self.actionWinding_Number.setText(_translate("MainWindow", "Winding Number Algorithm"))

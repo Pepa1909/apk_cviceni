@@ -4,7 +4,8 @@ from PyQt6.QtCore import *
 from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 
-data = gpd.read_file("okresy\Okresy_-_polygony.shp")
+data = gpd.read_file("kraje/a71a57cd-4dc3-47d0-b563-f0cbb931bb63202034-1-yzjid4.uq3uf.shp")
+data.keys()
 polygony = data.geometry
 all_pols = QPolygonF
 for index, pol in enumerate(polygony):
