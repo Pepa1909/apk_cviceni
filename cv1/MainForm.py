@@ -105,12 +105,18 @@ class Ui_MainWindow(object):
     def rayCrossingClick(self):
         # get data
         q = self.Canvas.getQ()
-        pol = self.Canvas.getPol()
+        minmaxboxes = self.Canvas.getminmaxes()
+        list_of_pols = self.Canvas.getPol()
         
-        # analysis
-        for i, polyg in enumerate(pol):
+        # analysis of min-max boxes
+        for i, polyg in enumerate(minmaxboxes):
             res = Algorithms.analyzePointPolygonPosition(self, q, polyg)
             self.Canvas.polyg_status[i] = res
+            
+        for i, polyg in enumerate(list_of_pols):
+            if self.Canvas.polyg_status[i] == 1:
+                res = Algorithms.analyzePointPolygonPosition(self, q, polyg)
+                self.Canvas.polyg_status[i] = res
         
         # show result
         mb = QtWidgets.QMessageBox()

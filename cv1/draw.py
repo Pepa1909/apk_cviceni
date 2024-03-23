@@ -11,9 +11,8 @@ class Draw(QWidget):
         super().__init__(*args, **kwargs)
         self.q = QPointF(-100, -100)
         self.list_of_pols = []
-        self.list_of_polmms = []
         self.polyg_status = []
-        self.add_vertex =  True
+        self.minmaxbox_list = []
         
     def loadData(self, data):
         polygony = data.geometry
@@ -22,12 +21,7 @@ class Draw(QWidget):
         xmax = -inf
         ymax = -inf
         for index, polyg in enumerate(polygony):
-            x_pol_min = inf
-            y_pol_min = inf
-            x_pol_max = -inf
-            y_pol_max = -inf
             pol = QPolygonF()
-            pol_mm = QPolygonF()
             g = []
             for i in polygony:
                 g.append(i)
@@ -39,20 +33,38 @@ class Draw(QWidget):
             for i in coords[0]:
                 p = QPointF(i[0],-i[1])
                 pol.append(p)
-                x_pol_min, y_pol_min, x_pol_max, y_pol_max = self.bounding(p, x_pol_min, y_pol_min, x_pol_max, y_pol_max)
                 xmin, ymin, xmax, ymax = self.bounding(p, xmin, ymin, xmax, ymax)
             self.list_of_pols.append(pol)
-            self.list_of_polmms.append(pol_mm)
             self.polyg_status.append(0)
-        self.resize(xmin, ymin, xmax, ymax)
-        self.resize(x_pol_min, y_pol_min, x_pol_max, y_pol_max)
-        pol_mm = QPolygonF([QPointF(x_pol_min,y_pol_min), QPointF(x_pol_min, y_pol_max), QPointF(y_pol_max,y_pol_max), QPointF(x_pol_max,y_pol_min)])
+            minmaxbox = self.minMaxBox(pol)
+            self.minmaxbox_list.append(minmaxbox)
+        self.resize(xmin, ymin, xmax, ymax, self.list_of_pols)
+        self.resize(xmin, ymin, xmax, ymax, self.minmaxbox_list)
         self.repaint()
        
-    def resize(self, xmin, ymin, xmax, ymax):
+    def minMaxBox(self, pol: QPolygonF):
+        
+        px_min = min(pol, key = lambda k: k.x())
+        px_max = max(pol, key = lambda k: k.x())
+        
+        py_min = min(pol, key = lambda k: k.y())
+        py_max = max(pol, key = lambda k: k.y())
+        
+        # new points with only min and max coords
+        v1 = QPointF(px_min.x(), py_min.y())
+        v2 = QPointF(px_max.x(), py_min.y())
+        v3 = QPointF(px_max.x(), py_max.y())
+        v4 = QPointF(px_min.x(), py_max.y())
+        
+        # create min_max box
+        box = QPolygonF([v1,v2,v3,v4])
+        
+        return box
+    
+    def resize(self, xmin, ymin, xmax, ymax, list_of_pols):
         height = self.frameGeometry().height()
         width = self.frameGeometry().width()
-        for pol in self.list_of_pols:
+        for pol in list_of_pols:
             for p in pol:
                 new_x = int((p.x() - xmin) * width/(xmax - xmin))
                 new_y = int((p.y() - ymin) * height/(ymax - ymin))
@@ -69,8 +81,6 @@ class Draw(QWidget):
             if p.y() > ymax:
                 ymax = p.y()
             return xmin, ymin, xmax, ymax
-            
-        
         
     def mousePressEvent(self, e: QMouseEvent):
         # get coordinates
@@ -117,13 +127,17 @@ class Draw(QWidget):
         # return analyzed point
         return self.q
     
+    def getminmaxes(self):
+        return self.minmaxbox_list
+    
     def getPol(self):
         # return analyzed polygon
         return self.list_of_pols
-    
+       
     def clearData(self):
         # clear polygon
         self.list_of_pols.clear()
+        self.minmaxbox_list.clear()
         
         # shift point
         self.q.setX(-100)
