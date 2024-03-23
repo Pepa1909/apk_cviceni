@@ -11,6 +11,7 @@ class Draw(QWidget):
         super().__init__(*args, **kwargs)
         self.q = QPointF(-100, -100)
         self.list_of_pols = []
+        self.list_of_polmms = []
         self.polyg_status = []
         self.add_vertex =  True
         
@@ -21,7 +22,12 @@ class Draw(QWidget):
         xmax = -inf
         ymax = -inf
         for index, polyg in enumerate(polygony):
+            x_pol_min = inf
+            y_pol_min = inf
+            x_pol_max = -inf
+            y_pol_max = -inf
             pol = QPolygonF()
+            pol_mm = QPolygonF()
             g = []
             for i in polygony:
                 g.append(i)
@@ -33,10 +39,14 @@ class Draw(QWidget):
             for i in coords[0]:
                 p = QPointF(i[0],-i[1])
                 pol.append(p)
+                x_pol_min, y_pol_min, x_pol_max, y_pol_max = self.bounding(p, x_pol_min, y_pol_min, x_pol_max, y_pol_max)
                 xmin, ymin, xmax, ymax = self.bounding(p, xmin, ymin, xmax, ymax)
             self.list_of_pols.append(pol)
+            self.list_of_polmms.append(pol_mm)
             self.polyg_status.append(0)
         self.resize(xmin, ymin, xmax, ymax)
+        self.resize(x_pol_min, y_pol_min, x_pol_max, y_pol_max)
+        pol_mm = QPolygonF([QPointF(x_pol_min,y_pol_min), QPointF(x_pol_min, y_pol_max), QPointF(y_pol_max,y_pol_max), QPointF(x_pol_max,y_pol_min)])
         self.repaint()
        
     def resize(self, xmin, ymin, xmax, ymax):

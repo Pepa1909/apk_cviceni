@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>616</width>
+    <height>454</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="Draw" name="Canvas" native="true"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>616</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuSimplify">
+    <property name="title">
+     <string>Simplify</string>
+    </property>
+    <addaction name="actionMinimum_Area_Enclosing_Rectangle"/>
+    <addaction name="actionPCA"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionClear_results"/>
+    <addaction name="actionClear_all"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSimplify"/>
+   <addaction name="menuView"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionOpen"/>
+   <addaction name="separator"/>
+   <addaction name="actionMinimum_Area_Enclosing_Rectangle"/>
+   <addaction name="actionPCA"/>
+   <addaction name="separator"/>
+   <addaction name="actionClear_results"/>
+   <addaction name="actionClear_all"/>
+   <addaction name="separator"/>
+   <addaction name="actionExit"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="images/icons/icons.qrc">
+     <normaloff>:/newPrefix/open_file.png</normaloff>:/newPrefix/open_file.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open file</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="images/icons/icons.qrc">
+     <normaloff>:/newPrefix/exit.png</normaloff>:/newPrefix/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="toolTip">
+    <string>Close app</string>
+   </property>
+  </action>
+  <action name="actionMinimum_Area_Enclosing_Rectangle">
+   <property name="icon">
+    <iconset resource="images/icons/icons.qrc">
+     <normaloff>:/newPrefix/maer.png</normaloff>:/newPrefix/maer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Minimum Rectangle</string>
+   </property>
+   <property name="toolTip">
+    <string>Simplify using Minimum Rectangle</string>
+   </property>
+  </action>
+  <action name="actionPCA">
+   <property name="icon">
+    <iconset resource="images/icons/icons.qrc">
+     <normaloff>:/newPrefix/pca.png</normaloff>:/newPrefix/pca.png</iconset>
+   </property>
+   <property name="text">
+    <string>PCA</string>
+   </property>
+   <property name="toolTip">
+    <string>Simplify using PCA</string>
+   </property>
+  </action>
+  <action name="actionClear_results">
+   <property name="icon">
+    <iconset resource="images/icons/icons.qrc">
+     <normaloff>:/newPrefix/clear_ch.png</normaloff>:/newPrefix/clear_ch.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear results</string>
+   </property>
+  </action>
+  <action name="actionClear_all">
+   <property name="icon">
+    <iconset resource="images/icons/icons.qrc">
+     <normaloff>:/newPrefix/clear_er.png</normaloff>:/newPrefix/clear_er.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear all</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Draw</class>
+   <extends>QWidget</extends>
+   <header>draw.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="images/icons/icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionOpen</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPCA</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionMinimum_Area_Enclosing_Rectangle</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClear_all</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionClear_results</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
