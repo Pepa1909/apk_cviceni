@@ -48,8 +48,11 @@ class Draw(QWidget):
         # draw CH
         
         # set graphical attributes MBR
+        qp.setPen(Qt.GlobalColor.red)
+        qp.setBrush(Qt.GlobalColor.transparent)
         
         # draw MBR
+        qp.drawPolygon(self.mbr)
         
         # end drawing
         qp.end()
@@ -58,6 +61,10 @@ class Draw(QWidget):
         # return analyzed polygon
         return self.building
     
+    def setMBR(self, mbr):
+        # set result
+        self.mbr = mbr
+        
     def clearData(self):
         # clear building
         self.building.clear()

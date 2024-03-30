@@ -1,5 +1,6 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 from draw import Draw
+from algorithms import Algorithms
 
 
 class Ui_MainWindow(object):
@@ -93,7 +94,18 @@ class Ui_MainWindow(object):
         pass
     
     def mbrClick(self):
-        pass
+        # get building
+        building = self.Canvas.getBuilding()
+        
+        # simplify building
+        a = Algorithms()
+        maer = a.mbr(building)
+        
+        # update result
+        self.Canvas.setMBR(maer)
+        
+        # repaint screen
+        self.Canvas.repaint()
     
     def pcaClick(self):
         pass
@@ -101,7 +113,7 @@ class Ui_MainWindow(object):
     def clearClick(self):
         pass
     
-    def clearAllClick(slef):
+    def clearAllClick(self):
         pass
 
     def retranslateUi(self, MainWindow):
