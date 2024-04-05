@@ -1,7 +1,9 @@
+
 from PyQt6 import QtCore, QtGui, QtWidgets
 from draw import Draw
-from algorithms import Algorithms
-
+from algorithms import *
+import sys
+import geopandas as gpd
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -16,7 +18,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.Canvas)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(parent=MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 616, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 616, 26))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(parent=self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -61,11 +63,35 @@ class Ui_MainWindow(object):
         icon5.addPixmap(QtGui.QPixmap("images/icons/clear_er.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionClear_all.setIcon(icon5)
         self.actionClear_all.setObjectName("actionClear_all")
+        self.actionLongest_Edge = QtGui.QAction(parent=MainWindow)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap("images/icons/longestedge.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionLongest_Edge.setIcon(icon6)
+        self.actionLongest_Edge.setObjectName("actionLongest_Edge")
+        self.actionWall_Average = QtGui.QAction(parent=MainWindow)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap("images/icons/wa.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionWall_Average.setIcon(icon7)
+        self.actionWall_Average.setObjectName("actionWall_Average")
+        self.actionWeighted_Bisector = QtGui.QAction(parent=MainWindow)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap("images/icons/weightedbisector.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
+        self.actionWeighted_Bisector.setIcon(icon8)
+        self.actionWeighted_Bisector.setObjectName("actionWeighted_Bisector")
+        self.actionJarvis_Scan = QtGui.QAction(parent=MainWindow)
+        self.actionJarvis_Scan.setCheckable(False)
+        self.actionJarvis_Scan.setObjectName("actionJarvis_Scan")
+        self.actionGraham_Scan = QtGui.QAction(parent=MainWindow)
+        self.actionGraham_Scan.setCheckable(False)
+        self.actionGraham_Scan.setObjectName("actionGraham_Scan")
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
         self.menuSimplify.addAction(self.actionMinimum_Area_Enclosing_Rectangle)
         self.menuSimplify.addAction(self.actionPCA)
+        self.menuSimplify.addAction(self.actionLongest_Edge)
+        self.menuSimplify.addAction(self.actionWall_Average)
+        self.menuSimplify.addAction(self.actionWeighted_Bisector)
         self.menuView.addAction(self.actionClear_results)
         self.menuView.addAction(self.actionClear_all)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -75,11 +101,27 @@ class Ui_MainWindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionMinimum_Area_Enclosing_Rectangle)
         self.toolBar.addAction(self.actionPCA)
+        self.toolBar.addAction(self.actionLongest_Edge)
+        self.toolBar.addAction(self.actionWall_Average)
+        self.toolBar.addAction(self.actionWeighted_Bisector)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionClear_results)
         self.toolBar.addAction(self.actionClear_all)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionExit)
+        self.toolBar.addSeparator()
+
+        self.buttonJarvis = QtWidgets.QRadioButton(text="Jarvis Scan", checkable=True)
+        self.buttonJarvis.setChecked(True)
+        self.buttonJarvis.setToolTip("Construct convex hull using Jarvis Scan algorithm")
+        self.buttonGraham = QtWidgets.QRadioButton(text="Graham Scan", checkable=True)
+        self.buttonGraham.setToolTip("Construct convex hull using Graham Scan algorithm")
+        # self.buttonJarvis.clicked.connect(self.switchToJarvis)
+        # self.buttonGraham.clicked.connect(self.switchToGraham)
+        self.group = QtWidgets.QButtonGroup(exclusive=True)
+        for button in (self.buttonJarvis, self.buttonGraham):
+            self.toolBar.addWidget(button)
+            self.group.addButton(button)
 
         self.retranslateUi(MainWindow)
         self.actionOpen.triggered.connect(self.OpenClick) # type: ignore
@@ -88,45 +130,170 @@ class Ui_MainWindow(object):
         self.actionClear_all.triggered.connect(self.clearAllClick) # type: ignore
         self.actionClear_results.triggered.connect(self.clearClick) # type: ignore
         self.actionExit.triggered.connect(MainWindow.close) # type: ignore
+        self.actionLongest_Edge.triggered.connect(self.longestEdgeClick) # type: ignore
+        self.actionWall_Average.triggered.connect(self.wallAverageClick) # type: ignore
+        self.actionWeighted_Bisector.triggered.connect(MainWindow.close) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-        
+         
     def OpenClick(self):
-        pass
+        #Open file
+        data = self.openFile()
+        
+        #If no file selected, return
+        if data is None:
+            return
+        
+        #Clear canvas for new polygon layer
+        self.Canvas.clearData()
+        
+        #Try to load and process the data
+        correct_data = self.Canvas.loadData(data)
+        
+        #Alert the user if Shapefile is invalid
+        if correct_data == False:
+            dlg = QtWidgets.QMessageBox()
+            dlg.setWindowTitle("Error Message")
+            dlg.setText("Invalid Shapefile")
+            dlg.exec()
+            return
+        
+    def openFile(self):
+        #Opens Shapefile
+        filename, _ = QFileDialog.getOpenFileName(caption="Open File", directory="input_files/.", filter="Shapefile (*.shp)")
+        
+        #Return if no file has been opened
+        if filename == "":
+            return None
+        
+        #Return data from shapefile
+        data = gpd.read_file(filename)
+        return data
     
     def mbrClick(self):
-        # get building
-        building = self.Canvas.getBuilding()
+        #Displays MAERs using MBR algorithm
+        self.Canvas.clearResults()
         
-        # simplify building
+        #Get building list
+        building_list = self.Canvas.getBuilding()
+        
+        #Warn user when no data are loaded
+        if len(building_list) == 0:
+            mb = QtWidgets.QMessageBox()
+            mb.setWindowTitle('Empty file')
+            mb.setText("There are no buildings")
+            mb.exec()
+            return
+        
+        #Simplify all buildings
         a = Algorithms()
-        maer = a.createMBR(building)
+        for building in building_list:
+            maer = a.createMBR(building)
+            self.Canvas.mbr_list.append(maer)
         
-        # update result
-        self.Canvas.setMBR(maer)
-        
-        # repaint screen
+        #Repaint screen
         self.Canvas.repaint()
     
     def pcaClick(self): # ctvrecove budovy spatne vysledky
-        # get building
-        building = self.Canvas.getBuilding()
+        #Displays MAERs using PCA algorithm
+        self.Canvas.clearResults()
         
-        # simplify building
+        #Get building list
+        building_list = self.Canvas.getBuilding()
+        
+        #Warn user when no data are loaded
+        if len(building_list) == 0:
+            mb = QtWidgets.QMessageBox()
+            mb.setWindowTitle('Empty file')
+            mb.setText("There are no buildings")
+            mb.exec()
+            return
+        
+        #Simplify all buildings
         a = Algorithms()
-        pca = a.createERPCA(building)
+        for building in building_list:
+            maer = a.createERPCA(building)
+            self.Canvas.mbr_list.append(maer)
         
-        # update result
-        self.Canvas.setMBR(pca)
-        
-        # repaint screen
+        #Repaint screen
         self.Canvas.repaint()
         
+    def longestEdgeClick(self):
+        #Displays MAERs using the Longest Edge algorithm
+        self.Canvas.clearResults()
+        
+        #Get building list
+        building_list = self.Canvas.getBuilding()
+        
+        #Warn user when no data are loaded
+        if len(building_list) == 0:
+            mb = QtWidgets.QMessageBox()
+            mb.setWindowTitle('Empty file')
+            mb.setText("There are no buildings")
+            mb.exec()
+            return
+        
+        #Simplify all buildings
+        a = Algorithms()
+        for building in building_list:
+            maer = a.longestEdge(building)
+            self.Canvas.mbr_list.append(maer)
+        
+        #Repaint screen
+        self.Canvas.repaint()
+    
+    def wallAverageClick(self):
+        #Displays MAERs using Wall Average algorithm
+        self.Canvas.clearResults()
+        
+        #Get building list
+        building_list = self.Canvas.getBuilding()
+        
+        #Warn user when no data are loaded
+        if len(building_list) == 0:
+            mb = QtWidgets.QMessageBox()
+            mb.setWindowTitle('Empty file')
+            mb.setText("There are no buildings")
+            mb.exec()
+            return
+        
+        #Simplify all buildings
+        a = Algorithms()
+        for building in building_list:
+            maer = a.wallAverage(building)
+            self.Canvas.mbr_list.append(maer)
+            
+    def weightedBisectorClick(self):
+        #Displays MAERs using Weighted Bisector algorithm
+        self.Canvas.clearResults()
+        
+        #Get building list
+        building_list = self.Canvas.getBuilding()
+        
+        #Warn user when no data are loaded
+        if len(building_list) == 0:
+            mb = QtWidgets.QMessageBox()
+            mb.setWindowTitle('Empty file')
+            mb.setText("There are no buildings")
+            mb.exec()
+            return
+        
+        #Simplify all buildings
+        a = Algorithms()
+        for building in building_list:
+            maer = a.weightedBisector(building)
+            self.Canvas.mbr_list.append(maer)
+        
+        #Repaint screen
+        self.Canvas.repaint()
     
     def clearClick(self):
-        pass
+        #Clear results
+        self.Canvas.clearResults()
     
     def clearAllClick(self):
-        pass
+        #Clear results and data
+        self.Canvas.clearAll()
+
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -145,6 +312,9 @@ class Ui_MainWindow(object):
         self.actionPCA.setToolTip(_translate("MainWindow", "Simplify using PCA"))
         self.actionClear_results.setText(_translate("MainWindow", "Clear results"))
         self.actionClear_all.setText(_translate("MainWindow", "Clear all"))
+        self.actionLongest_Edge.setText(_translate("MainWindow", "Longest Edge"))
+        self.actionWall_Average.setText(_translate("MainWindow", "Wall Average"))
+        self.actionWeighted_Bisector.setText(_translate("MainWindow", "Weighted Bisector"))
 
 if __name__ == "__main__":
     import sys

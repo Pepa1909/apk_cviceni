@@ -26,7 +26,7 @@
      <x>0</x>
      <y>0</y>
      <width>616</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -43,6 +43,9 @@
     </property>
     <addaction name="actionMinimum_Area_Enclosing_Rectangle"/>
     <addaction name="actionPCA"/>
+    <addaction name="actionLongest_Edge"/>
+    <addaction name="actionWall_Average"/>
+    <addaction name="actionWeighted_Bisector"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -70,16 +73,20 @@
    <addaction name="separator"/>
    <addaction name="actionMinimum_Area_Enclosing_Rectangle"/>
    <addaction name="actionPCA"/>
+   <addaction name="actionLongest_Edge"/>
+   <addaction name="actionWall_Average"/>
+   <addaction name="actionWeighted_Bisector"/>
    <addaction name="separator"/>
    <addaction name="actionClear_results"/>
    <addaction name="actionClear_all"/>
    <addaction name="separator"/>
    <addaction name="actionExit"/>
+   <addaction name="separator"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="images/icons/icons.qrc">
-     <normaloff>:/newPrefix/open_file.png</normaloff>:/newPrefix/open_file.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/open_file.png</normaloff>:/images/icons/open_file.png</iconset>
    </property>
    <property name="text">
     <string>Open</string>
@@ -90,8 +97,8 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="images/icons/icons.qrc">
-     <normaloff>:/newPrefix/exit.png</normaloff>:/newPrefix/exit.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/exit.png</normaloff>:/images/icons/exit.png</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -102,8 +109,8 @@
   </action>
   <action name="actionMinimum_Area_Enclosing_Rectangle">
    <property name="icon">
-    <iconset resource="images/icons/icons.qrc">
-     <normaloff>:/newPrefix/maer.png</normaloff>:/newPrefix/maer.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/maer.png</normaloff>:/images/icons/maer.png</iconset>
    </property>
    <property name="text">
     <string>Minimum Rectangle</string>
@@ -114,8 +121,8 @@
   </action>
   <action name="actionPCA">
    <property name="icon">
-    <iconset resource="images/icons/icons.qrc">
-     <normaloff>:/newPrefix/pca.png</normaloff>:/newPrefix/pca.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/pca.png</normaloff>:/images/icons/pca.png</iconset>
    </property>
    <property name="text">
     <string>PCA</string>
@@ -126,8 +133,8 @@
   </action>
   <action name="actionClear_results">
    <property name="icon">
-    <iconset resource="images/icons/icons.qrc">
-     <normaloff>:/newPrefix/clear_ch.png</normaloff>:/newPrefix/clear_ch.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/clear_ch.png</normaloff>:/images/icons/clear_ch.png</iconset>
    </property>
    <property name="text">
     <string>Clear results</string>
@@ -135,11 +142,54 @@
   </action>
   <action name="actionClear_all">
    <property name="icon">
-    <iconset resource="images/icons/icons.qrc">
-     <normaloff>:/newPrefix/clear_er.png</normaloff>:/newPrefix/clear_er.png</iconset>
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/clear_er.png</normaloff>:/images/icons/clear_er.png</iconset>
    </property>
    <property name="text">
     <string>Clear all</string>
+   </property>
+  </action>
+  <action name="actionLongest_Edge">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/longestedge.png</normaloff>:/images/icons/longestedge.png</iconset>
+   </property>
+   <property name="text">
+    <string>Longest Edge</string>
+   </property>
+  </action>
+  <action name="actionWall_Average">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/wa.png</normaloff>:/images/icons/wa.png</iconset>
+   </property>
+   <property name="text">
+    <string>Wall Average</string>
+   </property>
+  </action>
+  <action name="actionWeighted_Bisector">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/images/icons/weightedbisector.png</normaloff>:/images/icons/weightedbisector.png</iconset>
+   </property>
+   <property name="text">
+    <string>Weighted Bisector</string>
+   </property>
+  </action>
+  <action name="actionJarvis_Scan">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Jarvis Scan</string>
+   </property>
+  </action>
+  <action name="actionGraham_Scan">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Graham Scan</string>
    </property>
   </action>
  </widget>
@@ -152,7 +202,7 @@
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="images/icons/icons.qrc"/>
+  <include location="icons.qrc"/>
  </resources>
  <connections>
   <connection>
@@ -237,6 +287,54 @@
   </connection>
   <connection>
    <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLongest_Edge</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWall_Average</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>307</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWeighted_Bisector</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>close()</slot>

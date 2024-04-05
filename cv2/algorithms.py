@@ -5,182 +5,147 @@ from math import *
 import numpy as np
 import scipy.linalg as spl
 
-# processing data
+#Processing data
 class Algorithms:
     def __init__(self):
         pass
-    
-    def analyzePointPolygonPosition(self, q:QPointF, pol:QPolygonF):
-        # inicialize intersection amount
-        k = 0
-         
-        # amount of vertices
-        n = len(pol)
-         
-        # process all segments
-        for i in range(n):
-             
-            # reduce coordinates
-            xir = pol[i].x() - q.x()
-            yir = pol[i].y() - q.y()
-             
-            xi1r = pol[(i+1)%n].x() - q.x() 
-            yi1r = pol[(i+1)%n].y() - q.y() 
-             
-            # suitable segment?
-            if ((yi1r > 0) and (yir <= 0)) or ((yir > 0) and (yi1r <= 0)):
-                
-                # compute intersection
-                xm = (xi1r * yir - xir * yi1r)/(yi1r - yir)
-                
-                # right halfplane?
-                if xm > 0:
-                    k += 1
-                    
-        # q inside polygon
-        if k%2 == 1:
-            return True
-        
-        # q outside polygon
-        return False
         
     def get2LineAngle(self, p1:QPointF,p2:QPointF,p3:QPointF,p4:QPointF):
-        # compute angle of two lines
-        # get parts of vectors
+        #Compute angle of two lines
+        #Get parts of vectors
         ux = p2.x() - p1.x()
         uy = p2.y() - p1.y()
         
         vx = p4.x() - p3.x()
         vy = p4.y() - p3.y()
         
-        # dot product
+        #Dot product
         dot = ux * vx + uy * vy
         
-        # norms of vectors
+        #Norms of vectors
         nu = (ux * ux + uy * uy)**(1/2)
         nv = (vx * vx + vy * vy)**(1/2)
         
-        # argument
+        #Argument
         arg = dot/(nu*nv)
         
-        if arg < -1:
-            arg = -1
-        elif arg > 1:
-            arg = 1
-        
-        # OR
+        #In case of extreme values
+        arg = max(min(arg, 1), -1)
         
         return acos(arg)
     
     def cHull(self, pol:QPolygonF):
-        # convex hull creation using Jarvis Scan
+        #Convex hull creation using Jarvis Scan
         ch = QPolygonF()
         
-        # find pivot 1
+        #Find pivot 1
         q = min(pol, key = lambda k: k.y())
         
-        # find pivot 2
-        s = min(pol, key = lambda k: k.x())
+        #Find pivot 2 the safe way (width of data)
+        p_max = max(pol, key = lambda k: k.x()) 
+        p_min = min(pol, key = lambda k: k.x())
         
-        # inicialize last two points of hull
+        data_w = p_max.x()-p_min.x()
+        
+        #Inicialize last two points of hull
         qj = q
-        qj1 = QPointF(s.x(), q.y())
+        qj1 = QPointF(q.x() - data_w, q.y())
         
-        # add pivot to hull
+        #Add pivot to hull
         ch.append(q)
         
-        # find all points of hull
+        #Find all points of hull
         while True:
-            # max and its index
+            #Max and its index
             omega_max = 0
             index_max = -1            
             
-            # process all points
+            #Process all points and compute angle
             for i in range(len(pol)):
                 if qj != pol[i]:
                     omega = self.get2LineAngle(qj, qj1, qj, pol[i])
                 
-                # update maximum
+                #Update maximum 
                     if omega > omega_max:
                         omega_max = omega
                         index_max = i
                     
-            # add point to hull
+            #Add point with maximum angle to hull
             ch.append(pol[index_max])
             
-            # found pivot again
+            #Found pivot again - convex hull is complete
             if pol[index_max] == q:
                 break
             
-            # update last segment
+            #Update last segment
             qj1 = qj
             qj = pol[index_max]
         
         return ch
     
     def minMaxBox(self, pol:QPolygonF):
-        # compute min_max box 
-        # find points with min and max coords
+        #Compute min_max box 
+        #Find points with min and max coords
         px_min = min(pol, key = lambda k: k.x())
         px_max = max(pol, key = lambda k: k.x())
         
         py_min = min(pol, key = lambda k: k.y())
         py_max = max(pol, key = lambda k: k.y())
         
-        # new points with only min and max coords
+        #New points with extreme coordinates
         v1 = QPointF(px_min.x(), py_min.y())
         v2 = QPointF(px_max.x(), py_min.y())
         v3 = QPointF(px_max.x(), py_max.y())
         v4 = QPointF(px_min.x(), py_max.y())
         
-        # create min_max box
+        #Create min_max box
         box = QPolygonF([v1,v2,v3,v4])
         
         return box
     
     def rotate(self, pol:QPolygonF, sig:float):
-        # rotate polygon by given angle
+        #Rotate polygon by given angle
         
         pol_r = QPolygonF()
         
         for p in pol:
-            # rotate point
+            #Rotate point
             x_r = p.x() * cos(sig) - p.y() * sin(sig) 
             y_r = p.x() * sin(sig) + p.y() * cos(sig)
 
-            # create rotated point
+            #Create rotated point
             p_r = QPointF(x_r, y_r)
             
-            # add to polygon
+            #Add to rotated polygon
             pol_r.append(p_r)
             
         return pol_r
     
     def getArea(self, pol:QPolygonF):
-        # compute area of polygon
+        #Compute area of polygon
         area = 0
         n = len(pol)
         
-        # process all points
+        #Process all points
         for i in range(n):
             area += pol[i].x() * (pol[(i+1)%n].y()-pol[(i-1+n)%n].y())   
             
         return abs(area)/2
     
     def resizeRectangle(self, rect:QPolygonF, build:QPolygonF):
-        # resize rectangle to match area of building        
-        # compute areas
+        #Resize rectangle to match area of building        
+        #Compute areas
         ab = self.getArea(build)
         a = self.getArea(rect)
         
-        # compute area ratio
+        #Compute area ratio
         k = ab/a
         
-        # compute center of mass
+        #Compute center of mass
         tx = (rect[0].x() + rect[1].x() + rect[2].x() + rect[3].x()) / 4
         ty = (rect[0].y() + rect[1].y() + rect[2].y() + rect[3].y()) / 4
         
-        # vectors
+        #Vectors
         u1x = rect[0].x() - tx
         u1y = rect[0].y() - ty
         u2x = rect[1].x() - tx
@@ -190,7 +155,7 @@ class Algorithms:
         u4x = rect[3].x() - tx
         u4y = rect[3].y() - ty
         
-        # new vertices
+        #New vertices
         v1x = tx + sqrt(k) * u1x
         v1y = ty + sqrt(k) * u1y
         v2x = tx + sqrt(k) * u2x
@@ -205,85 +170,180 @@ class Algorithms:
         v3 = QPointF(v3x, v3y)
         v4 = QPointF(v4x, v4y)
         
-        # add vertices to polygon
+        #Add vertices to polygon
         rect_r = QPolygonF([v1, v2, v3, v4])
 
         return rect_r
         
     def createMBR(self, pol:QPolygonF):
-        # create minimum bounding rectangle
-        # copmute convex hull
+        #Create minimum bounding rectangle
+        #Copmute convex hull
         ch = self.cHull(pol)
         n = len(ch)
                 
-        # inicialize min-max box
+        #Inicialize min-max box
         mmb_min = self.minMaxBox(ch)
         area_min = self.getArea(mmb_min)
         sigma_min = 0
         
-        # process all segmments of convex hull
+        #Process all segmments of convex hull
         for i in range(n):
             dx = ch[(i+1)%n].x() - ch[i].x()
             dy = ch[(i+1)%n].y() - ch[i].y()
             
-            # direction
+            #Direction
             sigma = atan2(dy, dx)
             
-            # rotate convex hull by -sigma
+            #Rotate convex hull by -sigma
             ch_rot = self.rotate(ch, -sigma)
             
-            # compute area of min-max box of rotated convex hull
+            #Compute area of min-max box of rotated convex hull
             mmb_rot = self.minMaxBox(ch_rot)
             area_rot = self.getArea(mmb_rot)
             
-            # smaller area?
+            #If the area is smaller than minimum, set new minimum and remember angle
             if area_rot < area_min:
                 area_min = area_rot
                 mmb_min = mmb_rot
                 sigma_min = sigma
                 
-        # back rotation
+        #Back rotation
         mmb_unrot = self.rotate(mmb_min, sigma_min)
         
-        # resize rectangle
+        #Resize rectangle
         mmb_res = self.resizeRectangle(mmb_unrot, pol)
         
         return mmb_res
     
     def createERPCA(self, pol:QPolygonF):
-        # create enclosing rectangle using PCA
-        # lists of coordinates
+        #Create enclosing rectangle using PCA
+        #Lists of coordinates
         x = []
         y = []
         
-        # add coordinates to lists
+        #Add coordinates to lists
         for p in pol:
             x.append(p.x())
             y.append(p.y())
             
-        # create array
+        #Create array
         P = np.array([x, y])
         
-        # covariation matrix
+        #Compute covariation matrix
         C = np.cov(P)
         
-        # SVD
+        #SVD
         U, S, V = spl.svd(C)
         
-        # compute sigma
+        #Compute sigma
         sigma = atan2(V[0][1], V[0][0])
         
-        # rotate polygon by -sigma
+        #Rotate polygon by -sigma
         pol_unrot = self.rotate(pol, -sigma)
         
-        # create min-max box
+        #Create min-max box
         mmb = self.minMaxBox(pol_unrot)
         
-        # rotate min-max box back
+        #Rotate min-max box back
         er = self.rotate(mmb, sigma)
         
-        # resize enclosing rectangle
+        #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
         return er_r
+    
+    def distance(self, p1:QPointF, p2:QPointF):
+        #Compute Euclid distance of two points
+        dist = sqrt((p2.x()-p1.x())**2 + (p2.y()-p1.y())**2)
+        
+        return dist
+    
+    def longestEdge(self, pol:QPolygonF):
+        #Create enclosing rectangle using Longest Edge algorithm
+        #Inicialize longest edge
+        longest_edge = -1
+        
+        n = len(pol)
+        
+        #Process all edges
+        for e in range(n):
+            #Compute edge length
+            e_len = self.distance(pol[e], pol[(e+1)%n])
+            #If new edge is longer than maximum, set new maximum and remember its coordinates
+            if e_len > longest_edge:
+                longest_edge = e_len
+                dx = pol[(e+1)%n].x() - pol[e].x()
+                dy = pol[(e+1)%n].y() - pol[e].y()
+        
+        #Compute the angle of the longest edge
+        sigma = atan2(dy, dx)
+        
+        #Rotate polygon by -sigma
+        pol_rot = self.rotate(pol, -sigma)
+        
+        #Create min-max box
+        mmb = self.minMaxBox(pol_rot)
+        
+        #Back rotation
+        er = self.rotate(mmb, sigma)
+        
+        #Resize enclosing rectangle
+        er_r = self.resizeRectangle(er, pol)
+        
+        return er_r
+        
+    def wallAverage(self, pol:QPolygonF):
+        #Create enclosing rectangle using the Wall Average algorithm
+        
+        n = len(pol)
+        #Compute angle of first edge
+        dx = pol[1].x() - pol[0].x()
+        dy = pol[1].y() - pol[0].y()
+        sigma = atan2(dy, dx)
+        
+        #Set average remainder to 0
+        r_sum = 0
+        
+        #Process all edges except the first one
+        for e in range(1, n):
+            dx_i = pol[(e+1)%n].x() - pol[e].x()
+            dy_i = pol[(e+1)%n].y() - pol[e].y()
+            
+            #Compute angle of edge
+            sigma_i = atan2(dy_i, dx_i)
+            
+            #Difference from initial slope
+            d_sigma_i = sigma_i-sigma
+            
+            #Division by 2/pi and rounding to whole number
+            k_i_r = round(d_sigma_i * pi/2)
+            
+            #Compute the remainder for segment
+            r_i = (d_sigma_i * pi/2 - k_i_r) * pi/2
+            
+            #Add current remainder to sum of remainders
+            r_sum += r_i
+            
+        #Compute artithmetic average of remainder    
+        r_avg = r_avg / n
+        
+        #Compute average angle
+        sigma_avg = sigma + r_avg
+        
+        #Rotate polygon by -sigma
+        pol_rot = self.rotate(pol, -sigma_avg)
+        
+        #Create min-max box 
+        mmb = self.minMaxBox(pol_rot)
+        
+        #Back rotation
+        er = self.rotate(mmb, sigma_avg)
+        
+        #Resize enclosing rectangle
+        er_r = self.resizeRectangle(er, pol)
+        
+        return er_r
+    
+    def weightedBisector(self, pol:QPolygonF):
+        pass
         

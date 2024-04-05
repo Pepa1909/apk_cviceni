@@ -1,0 +1,181 @@
+# -*- coding: utf-8 -*-
+
+################################################################################
+## Form generated from reading UI file 'form.ui'
+##
+## Created by: Qt User Interface Compiler version 6.6.2
+##
+## WARNING! All changes made in this file will be lost when recompiling UI file!
+################################################################################
+
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+    QMetaObject, QObject, QPoint, QRect,
+    QSize, QTime, QUrl, Qt)
+from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
+    QCursor, QFont, QFontDatabase, QGradient,
+    QIcon, QImage, QKeySequence, QLinearGradient,
+    QPainter, QPalette, QPixmap, QRadialGradient,
+    QTransform)
+from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, QMenu,
+    QMenuBar, QSizePolicy, QStatusBar, QToolBar,
+    QWidget)
+
+from draw import Draw
+import image_rc
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        if not MainWindow.objectName():
+            MainWindow.setObjectName(u"MainWindow")
+        MainWindow.resize(646, 488)
+        self.actionOpen = QAction(MainWindow)
+        self.actionOpen.setObjectName(u"actionOpen")
+        icon = QIcon()
+        icon.addFile(u":/images/icons/open_file.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionOpen.setIcon(icon)
+        self.actionExit = QAction(MainWindow)
+        self.actionExit.setObjectName(u"actionExit")
+        icon1 = QIcon()
+        icon1.addFile(u":/images/icons/exit.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionExit.setIcon(icon1)
+        self.actionCreate_DTM = QAction(MainWindow)
+        self.actionCreate_DTM.setObjectName(u"actionCreate_DTM")
+        icon2 = QIcon()
+        icon2.addFile(u":/images/icons/triangles2.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionCreate_DTM.setIcon(icon2)
+        self.actionCreate_contour_lines = QAction(MainWindow)
+        self.actionCreate_contour_lines.setObjectName(u"actionCreate_contour_lines")
+        icon3 = QIcon()
+        icon3.addFile(u":/images/icons/contours2.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionCreate_contour_lines.setIcon(icon3)
+        self.actionAnalyze_slope = QAction(MainWindow)
+        self.actionAnalyze_slope.setObjectName(u"actionAnalyze_slope")
+        icon4 = QIcon()
+        icon4.addFile(u":/images/icons/slope2.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionAnalyze_slope.setIcon(icon4)
+        self.actionAnalyze_exposition = QAction(MainWindow)
+        self.actionAnalyze_exposition.setObjectName(u"actionAnalyze_exposition")
+        icon5 = QIcon()
+        icon5.addFile(u":/images/icons/orientation2.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionAnalyze_exposition.setIcon(icon5)
+        self.actionDTM = QAction(MainWindow)
+        self.actionDTM.setObjectName(u"actionDTM")
+        self.actionDTM.setCheckable(True)
+        self.actionCountour_lines = QAction(MainWindow)
+        self.actionCountour_lines.setObjectName(u"actionCountour_lines")
+        self.actionCountour_lines.setCheckable(True)
+        self.actionSlope = QAction(MainWindow)
+        self.actionSlope.setObjectName(u"actionSlope")
+        self.actionSlope.setCheckable(True)
+        self.actionExposition = QAction(MainWindow)
+        self.actionExposition.setObjectName(u"actionExposition")
+        self.actionExposition.setCheckable(True)
+        self.actionResults = QAction(MainWindow)
+        self.actionResults.setObjectName(u"actionResults")
+        icon6 = QIcon()
+        icon6.addFile(u":/images/icons/clear.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionResults.setIcon(icon6)
+        self.actionClear_all = QAction(MainWindow)
+        self.actionClear_all.setObjectName(u"actionClear_all")
+        icon7 = QIcon()
+        icon7.addFile(u":/images/icons/clear_all.png", QSize(), QIcon.Normal, QIcon.Off)
+        self.actionClear_all.setIcon(icon7)
+        self.centralwidget = QWidget(MainWindow)
+        self.centralwidget.setObjectName(u"centralwidget")
+        self.horizontalLayout = QHBoxLayout(self.centralwidget)
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
+        self.Canvas = Draw(self.centralwidget)
+        self.Canvas.setObjectName(u"Canvas")
+
+        self.horizontalLayout.addWidget(self.Canvas)
+
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QMenuBar(MainWindow)
+        self.menubar.setObjectName(u"menubar")
+        self.menubar.setGeometry(QRect(0, 0, 646, 22))
+        self.menuFile = QMenu(self.menubar)
+        self.menuFile.setObjectName(u"menuFile")
+        self.menuAnalysis = QMenu(self.menubar)
+        self.menuAnalysis.setObjectName(u"menuAnalysis")
+        self.menuView = QMenu(self.menubar)
+        self.menuView.setObjectName(u"menuView")
+        self.menuClear = QMenu(self.menubar)
+        self.menuClear.setObjectName(u"menuClear")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QStatusBar(MainWindow)
+        self.statusbar.setObjectName(u"statusbar")
+        MainWindow.setStatusBar(self.statusbar)
+        self.toolBar = QToolBar(MainWindow)
+        self.toolBar.setObjectName(u"toolBar")
+        MainWindow.addToolBar(Qt.TopToolBarArea, self.toolBar)
+
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuAnalysis.menuAction())
+        self.menubar.addAction(self.menuView.menuAction())
+        self.menubar.addAction(self.menuClear.menuAction())
+        self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionExit)
+        self.menuAnalysis.addAction(self.actionCreate_DTM)
+        self.menuAnalysis.addSeparator()
+        self.menuAnalysis.addAction(self.actionCreate_contour_lines)
+        self.menuAnalysis.addAction(self.actionAnalyze_slope)
+        self.menuAnalysis.addAction(self.actionAnalyze_exposition)
+        self.menuView.addAction(self.actionDTM)
+        self.menuView.addAction(self.actionCountour_lines)
+        self.menuView.addAction(self.actionSlope)
+        self.menuView.addAction(self.actionExposition)
+        self.menuClear.addAction(self.actionResults)
+        self.menuClear.addAction(self.actionClear_all)
+        self.toolBar.addAction(self.actionOpen)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionCreate_DTM)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionCreate_contour_lines)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionAnalyze_slope)
+        self.toolBar.addAction(self.actionAnalyze_exposition)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionResults)
+        self.toolBar.addAction(self.actionClear_all)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionExit)
+
+        self.retranslateUi(MainWindow)
+        self.actionAnalyze_exposition.triggered.connect(MainWindow.close)
+        self.actionAnalyze_slope.triggered.connect(MainWindow.close)
+        self.actionClear_all.triggered.connect(MainWindow.close)
+        self.actionCountour_lines.triggered.connect(MainWindow.close)
+        self.actionDTM.triggered.connect(MainWindow.close)
+        self.actionExit.triggered.connect(MainWindow.close)
+        self.actionExposition.triggered.connect(MainWindow.close)
+        self.actionOpen.triggered.connect(MainWindow.close)
+        self.actionResults.triggered.connect(MainWindow.close)
+        self.actionSlope.triggered.connect(MainWindow.close)
+        self.actionCreate_contour_lines.triggered.connect(MainWindow.close)
+        self.actionCreate_DTM.triggered.connect(MainWindow.close)
+
+        QMetaObject.connectSlotsByName(MainWindow)
+    # setupUi
+
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"DTM Analysis", None))
+        self.actionOpen.setText(QCoreApplication.translate("MainWindow", u"Open", None))
+        self.actionExit.setText(QCoreApplication.translate("MainWindow", u"Exit", None))
+        self.actionCreate_DTM.setText(QCoreApplication.translate("MainWindow", u"Create DTM", None))
+        self.actionCreate_contour_lines.setText(QCoreApplication.translate("MainWindow", u"Create contour lines", None))
+        self.actionAnalyze_slope.setText(QCoreApplication.translate("MainWindow", u"Analyze slope", None))
+        self.actionAnalyze_exposition.setText(QCoreApplication.translate("MainWindow", u"Analyze exposition", None))
+        self.actionDTM.setText(QCoreApplication.translate("MainWindow", u"DTM", None))
+        self.actionCountour_lines.setText(QCoreApplication.translate("MainWindow", u"Countour lines", None))
+        self.actionSlope.setText(QCoreApplication.translate("MainWindow", u"Slope", None))
+        self.actionExposition.setText(QCoreApplication.translate("MainWindow", u"Exposition", None))
+        self.actionResults.setText(QCoreApplication.translate("MainWindow", u"Clear results", None))
+        self.actionClear_all.setText(QCoreApplication.translate("MainWindow", u"Clear all", None))
+        self.menuFile.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
+        self.menuAnalysis.setTitle(QCoreApplication.translate("MainWindow", u"Analysis", None))
+        self.menuView.setTitle(QCoreApplication.translate("MainWindow", u"View", None))
+        self.menuClear.setTitle(QCoreApplication.translate("MainWindow", u"Clear", None))
+        self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
+    # retranslateUi
+
