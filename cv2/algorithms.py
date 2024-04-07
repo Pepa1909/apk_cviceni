@@ -34,7 +34,7 @@ class Algorithms:
         
         return acos(arg)
     
-    def cHull(self, pol:QPolygonF):
+    def jarvisScan(self, pol:QPolygonF):
         #Convex hull creation using Jarvis Scan
         ch = QPolygonF()
         
@@ -178,7 +178,7 @@ class Algorithms:
     def createMBR(self, pol:QPolygonF):
         #Create minimum bounding rectangle
         #Copmute convex hull
-        ch = self.cHull(pol)
+        ch = self.jarvisScan(pol)
         n = len(ch)
                 
         #Inicialize min-max box
@@ -325,7 +325,7 @@ class Algorithms:
             r_sum += r_i
             
         #Compute artithmetic average of remainder    
-        r_avg = r_avg / n
+        r_avg = r_sum / n
         
         #Compute average angle
         sigma_avg = sigma + r_avg
@@ -345,5 +345,45 @@ class Algorithms:
         return er_r
     
     def weightedBisector(self, pol:QPolygonF):
-        pass
+        ch = self.jarvisScan(pol)
         
+        diagonals = []
+        
+        n = len(ch)
+        
+        for i in range(n):
+            for j in range(2, n-1):
+                diagonals.append([ch[i], ch[j], self.distance(ch[i], ch[j])])
+        
+        diagonals.sort(key = lambda k: k[2], reverse=True)
+        
+        for diag in range(n):
+            pass
+            
+        
+        dx1 = diagonals[0][1].x() - diagonals[0][0].x()
+        dy1 = diagonals[0][1].y() - diagonals[0][0].y()
+        sigma1 = atan2(dy1, dx1)
+        
+        dx2 = diagonals[1][1].x() - diagonals[1][0].x()
+        dy2 = diagonals[1][1].y() - diagonals[1][0].y()
+        sigma2 = atan2(dy2, dx2)
+        
+        sigma = (sigma1 * diagonals[0][2] + sigma2 * diagonals[1][2]) / (diagonals[0][2] + diagonals[1][2])
+        
+        #Rotate polygon by -sigma
+        pol_rot = self.rotate(pol, -sigma)
+        
+        #Create min-max box
+        mmb = self.minMaxBox(pol_rot)
+        
+        #Back rotation
+        er = self.rotate(mmb, sigma)
+        
+        #Resize enclosing rectangle
+        er_r = self.resizeRectangle(er, pol)
+        
+        return er_r
+        
+    def orientation(self, p1:QPointF, p2:QPointF, p3:QPointF):
+        pass

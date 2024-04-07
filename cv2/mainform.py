@@ -132,7 +132,7 @@ class Ui_MainWindow(object):
         self.actionExit.triggered.connect(MainWindow.close) # type: ignore
         self.actionLongest_Edge.triggered.connect(self.longestEdgeClick) # type: ignore
         self.actionWall_Average.triggered.connect(self.wallAverageClick) # type: ignore
-        self.actionWeighted_Bisector.triggered.connect(MainWindow.close) # type: ignore
+        self.actionWeighted_Bisector.triggered.connect(self.weightedBisectorClick) # type: ignore
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
          
     def OpenClick(self):
@@ -144,7 +144,7 @@ class Ui_MainWindow(object):
             return
         
         #Clear canvas for new polygon layer
-        self.Canvas.clearData()
+        self.Canvas.clearAll()
         
         #Try to load and process the data
         correct_data = self.Canvas.loadData(data)
@@ -261,6 +261,9 @@ class Ui_MainWindow(object):
         for building in building_list:
             maer = a.wallAverage(building)
             self.Canvas.mbr_list.append(maer)
+            
+        #Repaint screen
+        self.Canvas.repaint()
             
     def weightedBisectorClick(self):
         #Displays MAERs using Weighted Bisector algorithm
