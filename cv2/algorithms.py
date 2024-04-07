@@ -258,7 +258,7 @@ class Algorithms:
         
         return dist
     
-    def longestEdge(self, pol:QPolygonF):
+    def createLongestEdge(self, pol:QPolygonF):
         #Create enclosing rectangle using Longest Edge algorithm
         #Inicialize longest edge
         longest_edge = -1
@@ -292,7 +292,7 @@ class Algorithms:
         
         return er_r
         
-    def wallAverage(self, pol:QPolygonF):
+    def createWallAverage(self, pol:QPolygonF):
         #Create enclosing rectangle using the Wall Average algorithm
         
         n = len(pol)
@@ -344,21 +344,37 @@ class Algorithms:
         
         return er_r
     
-    def weightedBisector(self, pol:QPolygonF):
+    def createWeightedBisector(self, pol:QPolygonF):
+        #Create enclosing rectangle using the Weighted Bisector algorithm
+        #Create convex hull of polygon
         ch = self.jarvisScan(pol)
         
+        #Initialize diagonals list
         diagonals = []
         
-        n = len(ch)
-        
+        #Iterate over all points (length-1 because the first and last points are identical)
+        n = len(ch)-1
         for i in range(n):
-            for j in range(2, n-1):
-                diagonals.append([ch[i], ch[j], self.distance(ch[i], ch[j])])
-        
+            #Iterate over all points
+            for j in range(n):
+                #Check for neighboring points and self
+                if i != j and i+1 != j and i-1 != j:
+                    #Create diagonal and remember its length
+                    diag = [ch[i], ch[j], self.distance(ch[i], ch[j])]
+                    #Chceck if the diagonal is not already in list
+                    if [diag[1], diag[0], diag[2]] not in diagonals:
+                        diagonals.append(diag)
+                        
+        #Sort diagonals by length
         diagonals.sort(key = lambda k: k[2], reverse=True)
         
-        for diag in range(n):
-            pass
+        for d in range(len(diagonals)):
+            diag = diagonals[d]
+            for j in range(len(diagonals)):
+                if d != j and diagonals[j][0] != diag[0]:
+                    print(diagonals[j][0], diag[0])
+                    print(diagonals[j][0] == diag[0])
+                    orientation = self.orientation
             
         
         dx1 = diagonals[0][1].x() - diagonals[0][0].x()

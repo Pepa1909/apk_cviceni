@@ -235,7 +235,7 @@ class Ui_MainWindow(object):
         #Simplify all buildings
         a = Algorithms()
         for building in building_list:
-            maer = a.longestEdge(building)
+            maer = a.createLongestEdge(building)
             self.Canvas.mbr_list.append(maer)
         
         #Repaint screen
@@ -259,7 +259,7 @@ class Ui_MainWindow(object):
         #Simplify all buildings
         a = Algorithms()
         for building in building_list:
-            maer = a.wallAverage(building)
+            maer = a.createWallAverage(building)
             self.Canvas.mbr_list.append(maer)
             
         #Repaint screen

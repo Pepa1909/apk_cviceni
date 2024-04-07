@@ -43,6 +43,13 @@ class Draw(QWidget):
     def getBuilding(self):
         #Return analyzed polygon list
         return self.building_list
+    
+    def clearResults(self):
+        #Clear results
+        self.mbr_list = []
+        
+        #Reapint screen
+        self.repaint()
         
     def clearAll(self):
         #Clear results and buildings
@@ -50,13 +57,6 @@ class Draw(QWidget):
         self.mbr_list = []
         
         #Repaint screen
-        self.repaint()
-    
-    def clearResults(self):
-        #Clear results
-        self.mbr_list = []
-        
-        #Reapint screen
         self.repaint()
         
     def findBoundingPoints(self, p:QPointF, xmin, ymin, xmax, ymax):
