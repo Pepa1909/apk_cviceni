@@ -283,7 +283,7 @@ class Ui_MainWindow(object):
         #Simplify all buildings
         a = Algorithms()
         for building in building_list:
-            maer = a.weightedBisector(building)
+            maer = a.createWeightedBisector(building)
             self.Canvas.mbr_list.append(maer)
         
         #Repaint screen

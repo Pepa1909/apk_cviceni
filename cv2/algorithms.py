@@ -350,7 +350,7 @@ class Algorithms:
         ch = self.jarvisScan(pol)
         
         #Initialize diagonals list
-        diagonals = []
+        diagonals_of_ch = []
         
         #Iterate over all points (length-1 because the first and last points are identical)
         n = len(ch)-1
@@ -362,30 +362,38 @@ class Algorithms:
                     #Create diagonal and remember its length
                     diag = [ch[i], ch[j], self.distance(ch[i], ch[j])]
                     #Chceck if the diagonal is not already in list
-                    if [diag[1], diag[0], diag[2]] not in diagonals:
-                        diagonals.append(diag)
-                        
-        #Sort diagonals by length
-        diagonals.sort(key = lambda k: k[2], reverse=True)
+                    if [diag[1], diag[0], diag[2]] not in diagonals_of_ch:
+                        diagonals_of_ch.append(diag)
         
-        for d in range(len(diagonals)):
-            diag = diagonals[d]
-            for j in range(len(diagonals)):
-                if d != j and diagonals[j][0] != diag[0]:
-                    print(diagonals[j][0], diag[0])
-                    print(diagonals[j][0] == diag[0])
-                    orientation = self.orientation
+        #List for real diagonals - created list contains diagonals of Convex Hull
+        real_diagonals = []
+        
+        #Iterate over all diagonals
+        for i in range(len(diagonals_of_ch)):
+            #Iterate over all points of polygon
+            for j in range(len(pol)):
+                #Don't consider diagonals with common points
+                if (diagonals_of_ch[i][0] or diagonals_of_ch[i][1]) != (pol[j] or pol[(j+1)%len(pol)]): 
+                    crossing = self.intersect(diagonals_of_ch[i][0], diagonals_of_ch[i][1], pol[j], pol[(j+1)%len(pol)])
+                    #If diagonal and polygon edge do not intersect, add to new list
+                    if crossing == False and diagonals_of_ch[i]:
+                        real_diagonals.append(diagonals_of_ch[i])
+                        break
             
+        #Sort diagonals by length
+        real_diagonals.sort(key = lambda k: k[2], reverse=True)
         
-        dx1 = diagonals[0][1].x() - diagonals[0][0].x()
-        dy1 = diagonals[0][1].y() - diagonals[0][0].y()
+        #Compute vectors and their slope
+        dx1 = real_diagonals[0][1].x() - real_diagonals[0][0].x()
+        dy1 = real_diagonals[0][1].y() - real_diagonals[0][0].y()
         sigma1 = atan2(dy1, dx1)
         
-        dx2 = diagonals[1][1].x() - diagonals[1][0].x()
-        dy2 = diagonals[1][1].y() - diagonals[1][0].y()
+        dx2 = real_diagonals[1][1].x() - real_diagonals[1][0].x()
+        dy2 = real_diagonals[1][1].y() - real_diagonals[1][0].y()
         sigma2 = atan2(dy2, dx2)
         
-        sigma = (sigma1 * diagonals[0][2] + sigma2 * diagonals[1][2]) / (diagonals[0][2] + diagonals[1][2])
+        #Final slope based weighted by lenghts of diagonals
+        sigma = (sigma1 * real_diagonals[0][2] + sigma2 * real_diagonals[1][2]) / (real_diagonals[0][2] + real_diagonals[1][2])
         
         #Rotate polygon by -sigma
         pol_rot = self.rotate(pol, -sigma)
@@ -400,6 +408,17 @@ class Algorithms:
         er_r = self.resizeRectangle(er, pol)
         
         return er_r
+    
+    def intersect(self, p1:QPointF, p2:QPointF, p3:QPointF, p4:QPointF):
+        #Determines if two given segments (p1p2 and p3p4) intersect
+        #Compute determinants
+        t1 = (p2.x() - p1.x()) * (p4.y() - p1.y()) - (p4.x() - p1.x()) * (p2.y() - p1.y())
+        t2 = (p2.x() - p1.x()) * (p3.y() - p1.y()) - (p3.x() - p1.x()) * (p2.y() - p1.y())
+        t3 = (p4.x() - p3.x()) * (p1.y() - p3.y()) - (p1.x() - p3.x()) * (p4.y() - p3.y())
+        t4 = (p4.x() - p3.x()) * (p2.y() - p3.y()) - (p2.x() - p3.x()) * (p4.y() - p3.y())
         
-    def orientation(self, p1:QPointF, p2:QPointF, p3:QPointF):
-        pass
+        #The intersection exists, if determinants have different signs
+        if t1 * t2 >= 0 or t3 * t4 >= 0:
+            return False
+        
+        return True
