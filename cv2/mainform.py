@@ -116,8 +116,8 @@ class Ui_MainWindow(object):
         self.buttonJarvis.setToolTip("Construct convex hull using Jarvis Scan algorithm")
         self.buttonGraham = QtWidgets.QRadioButton(text="Graham Scan", checkable=True)
         self.buttonGraham.setToolTip("Construct convex hull using Graham Scan algorithm")
-        # self.buttonJarvis.clicked.connect(self.switchToJarvis)
-        # self.buttonGraham.clicked.connect(self.switchToGraham)
+        self.buttonJarvis.clicked.connect(self.chJarvis)
+        self.buttonGraham.clicked.connect(self.chGraham)
         self.group = QtWidgets.QButtonGroup(exclusive=True)
         for button in (self.buttonJarvis, self.buttonGraham):
             self.toolBar.addWidget(button)
@@ -297,6 +297,13 @@ class Ui_MainWindow(object):
         #Clear results and data
         self.Canvas.clearAll()
 
+    def chJarvis(self):
+        #Switches convex hull algorithm to Jarvis Scan (default)
+        Algorithms.ch_method = Algorithms.jarvisScan
+        
+    def chGraham(self):
+        #Switches convex hull algorithm to Graham Scan
+        Algorithms.ch_method = Algorithms.grahamScan
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate

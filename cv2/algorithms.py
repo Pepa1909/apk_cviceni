@@ -83,6 +83,43 @@ class Algorithms:
         
         return ch
     
+    def grahamScan(self, pol:QPolygonF):
+        #Convex hull creation using Graham Scan 
+        #Find pivot
+        q = min(pol, key=lambda k: k.y())
+        
+        #Create list of points
+        points = []
+        for p in pol:
+            points.append(p)
+        
+        #Sort points by their angle and secondary by distance from pivot
+        points.sort(key=lambda k: (self.computeSlope(q, k), self.distance(q, k)))
+        
+        #Create list for convex hull points
+        ch_list = []
+        n = len(pol)
+        
+        #Iterate over all points
+        for i in range(n):
+            #Makes sure to append first two points
+            while len(ch_list) >= 2:
+                #Checks if point is in left half-plane
+                if self.getPointandLinePosition(ch_list[-2], ch_list[-1], points[i]):
+                    break
+                #Removes last appended point if not in left half-plane
+                ch_list.pop()
+            #Appends next point
+            ch_list.append(points[i])
+        
+        #Append pivot to match Jarvis Scan creation
+        ch_list.append(q)
+        
+        #Create polygon from list
+        ch = QPolygonF(ch_list)
+        
+        return ch
+    
     def minMaxBox(self, pol:QPolygonF):
         #Compute min_max box 
         #Find points with min and max coords
@@ -178,7 +215,7 @@ class Algorithms:
     def createMBR(self, pol:QPolygonF):
         #Create minimum bounding rectangle
         #Copmute convex hull
-        ch = self.jarvisScan(pol)
+        ch = self.ch_method(pol)
         n = len(ch)
                 
         #Inicialize min-max box
@@ -347,7 +384,7 @@ class Algorithms:
     def createWeightedBisector(self, pol:QPolygonF):
         #Create enclosing rectangle using the Weighted Bisector algorithm
         #Create convex hull of polygon
-        ch = self.jarvisScan(pol)
+        ch = self.ch_method(pol)
         
         #Initialize diagonals list
         diagonals_of_ch = []
@@ -422,3 +459,34 @@ class Algorithms:
             return False
         
         return True
+    
+    def computeSlope(self, p1:QPointF, p2:QPointF):
+        #Computes slope of two points
+        dx = p2.x() - p1.x()
+        dy = p2.y() - p1.y()
+
+        return atan2(dy, dx)
+    
+    def getPointandLinePosition(self, p:QPointF, p1:QPointF, p2:QPointF):
+        ux = p2.x() - p1.x()
+        uy = p2.y() - p1.y()
+        
+        vx = p.x() - p1.x()
+        vy = p.y() - p1.y()
+        
+        #Test
+        t = ux * vy - uy * vx
+        
+        #Point in left half-plane
+        if t > 0:
+            return 1
+        
+        #Point in right half-plane
+        if t < 0:
+            return 0
+        
+        #Point on line
+        return -1
+    
+    #Set default convex hull algorithm to Jarvis Scan
+    ch_method = jarvisScan
