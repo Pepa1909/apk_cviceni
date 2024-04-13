@@ -124,19 +124,53 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionExit)
 
         self.retranslateUi(MainWindow)
-        self.actionAnalyze_exposition.triggered.connect(MainWindow.close) # type: ignore
-        self.actionAnalyze_slope.triggered.connect(MainWindow.close) # type: ignore
-        self.actionClear_all.triggered.connect(MainWindow.close) # type: ignore
-        self.actionCountour_lines.triggered.connect(MainWindow.close) # type: ignore
-        self.actionDTM.triggered.connect(MainWindow.close) # type: ignore
-        self.actionExit.triggered.connect(MainWindow.close) # type: ignore
-        self.actionExposition.triggered.connect(MainWindow.close) # type: ignore
-        self.actionOpen.triggered.connect(MainWindow.close) # type: ignore
-        self.actionResults.triggered.connect(MainWindow.close) # type: ignore
-        self.actionSlope.triggered.connect(MainWindow.close) # type: ignore
-        self.actionCreate_contour_lines.triggered.connect(MainWindow.close) # type: ignore
-        self.actionCreate_DTM.triggered.connect(MainWindow.close) # type: ignore
+        self.actionOpen.triggered.connect(self.openClick) # type: ignore
+        self.actionCreate_DTM.triggered.connect(self.createDTMClick) # type: ignore
+        self.actionCreate_contour_lines.triggered.connect(self.createContourLinesClick) # type: ignore
+        self.actionAnalyze_slope.triggered.connect(self.analyzeSlopeClick) # type: ignore
+        self.actionAnalyze_exposition.triggered.connect(self.analyzeExpositionClick) # type: ignore
+        self.actionResults.triggered.connect(self.clearResultsClick) # type: ignore
+        self.actionClear_all.triggered.connect(self.clearAllClick) # type: ignore
+        self.actionDTM.triggered.connect(self.viewDTClick) # type: ignore
+        self.actionCountour_lines.triggered.connect(self.viewContourLinesClick) # type: ignore
+        self.actionSlope.triggered.connect(self.viewSlopeClick) # type: ignore
+        self.actionExposition.triggered.connect(self.viewExpositionClick) # type: ignore
+        self.actionExit.triggered.connect(MainWindow.close) # type: ignore        
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        
+    def openClick(self):
+        pass
+    
+    def createDTMClick(self):
+        pass 
+    
+    def createContourLinesClick(self):
+        pass
+    
+    def analyzeExpositionClick(self):
+        pass
+    
+    def analyzeSlopeClick(self):
+        pass 
+    
+    def viewDTClick(self):
+        pass
+    
+    def viewContourLinesClick(self):
+        pass
+    
+    def viewSlopeClick(self):
+        pass
+    
+    def viewExpositionClick(self):
+        pass
+    
+    def clearResultsClick(self):
+        pass
+    
+    def clearAllClick(self):
+        pass
+    
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
