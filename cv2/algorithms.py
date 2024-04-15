@@ -134,6 +134,10 @@ class Algorithms:
         #Resize rectangle
         mmb_res = self.resizeRectangle(mmb_unrot, pol)
         
+        
+        eval = self.evaluation(pol, sigma_min)
+        print(eval)
+        
         return mmb_res
     
     
@@ -233,11 +237,14 @@ class Algorithms:
             #Difference from initial slope
             d_sigma_i = sigma_i-sigma
             
+            #pi/2 multiplication
+            k_i = d_sigma_i * pi/2
+            
             #Division by 2/pi and rounding to whole number
-            k_i_r = round(d_sigma_i * pi/2)
+            k_i_r = round(k_i)
             
             #Compute the remainder for segment
-            r_i = (d_sigma_i * pi/2 - k_i_r) * pi/2
+            r_i = (k_i - k_i_r) * pi/2
             
             #Add current remainder to sum of remainders
             r_sum += r_i
@@ -506,6 +513,30 @@ class Algorithms:
         
         #Point on line
         return -1
+    
+    
+    def evaluation(self, pol:QPolygonF, sigma_rect:float):
+        
+        r_sum = 0
+        n = len(pol)
+        for i in range(n):
+            dx_i = pol[(i+1)%n].x() - pol[i].x()
+            dy_i = pol[(i+1)%n].y() - pol[i].y()
+            
+            #Compute angle of edge
+            sigma_i = atan2(dy_i, dx_i)
+            
+            k_i = sigma_i * 2/pi
+            k_i_r = round(k_i)
+            
+            r_i = (k_i - k_i_r) * pi/2
+            r_sum += r_i - sigma_rect
+            
+        d_sigma = pi/(2*n)*r_sum
+        
+        return abs(d_sigma*180/pi)
+        
+        
     
     
     #Set default convex hull algorithm to Jarvis Scan
