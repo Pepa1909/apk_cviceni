@@ -135,8 +135,7 @@ class Algorithms:
         mmb_res = self.resizeRectangle(mmb_unrot, pol)
         
         
-        eval = self.evaluation(pol, sigma_min)
-        print(eval)
+        print(self.evaluation(pol, sigma_min))
         
         return mmb_res
     
@@ -176,6 +175,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
+        print(self.evaluation(pol, sigma))
         return er_r
     
     
@@ -211,6 +211,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
+        print(self.evaluation(pol, sigma))
         return er_r
         
         
@@ -238,7 +239,7 @@ class Algorithms:
             d_sigma_i = sigma_i-sigma
             
             #pi/2 multiplication
-            k_i = d_sigma_i * pi/2
+            k_i = d_sigma_i * 2/pi
             
             #Division by 2/pi and rounding to whole number
             k_i_r = round(k_i)
@@ -267,6 +268,8 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
+        
+        print(self.evaluation(pol, sigma_avg))
         return er_r
     
     
@@ -337,6 +340,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
+        print(self.evaluation(pol, sigma))
         return er_r
      
     
@@ -526,18 +530,16 @@ class Algorithms:
             #Compute angle of edge
             sigma_i = atan2(dy_i, dx_i)
             
-            k_i = sigma_i * 2/pi
+            k_i = 2*sigma_i / pi
             k_i_r = round(k_i)
             
             r_i = (k_i - k_i_r) * pi/2
-            r_sum += r_i - sigma_rect
+            r_edge = r_i - sigma_rect
+            r_sum += r_edge
             
-        d_sigma = pi/(2*n)*r_sum
+        d_sigma = pi/(2*n) * r_sum
         
-        return abs(d_sigma*180/pi)
-        
-        
-    
+        return abs(d_sigma) * 180/pi
     
     #Set default convex hull algorithm to Jarvis Scan
     ch_method = jarvisScan
