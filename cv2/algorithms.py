@@ -135,7 +135,7 @@ class Algorithms:
         mmb_res = self.resizeRectangle(mmb_unrot, pol)
         
         
-        print(self.evaluation(pol, sigma_min))
+        print(self.evaluation(pol, mmb_res))
         
         return mmb_res
     
@@ -175,7 +175,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation(pol, sigma))
+        print(self.evaluation(pol, er_r))
         return er_r
     
     
@@ -211,7 +211,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation(pol, sigma))
+        print(self.evaluation(pol, er_r))
         return er_r
         
         
@@ -269,7 +269,7 @@ class Algorithms:
         er_r = self.resizeRectangle(er, pol)
         
         
-        print(self.evaluation(pol, sigma_avg))
+        print(self.evaluation(pol, er_r))
         return er_r
     
     
@@ -340,7 +340,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation(pol, sigma))
+        print(self.evaluation(pol, er_r))
         return er_r
      
     
@@ -519,9 +519,32 @@ class Algorithms:
         return -1
     
     
-    def evaluation(self, pol:QPolygonF, sigma_rect:float):
+    def mainDirection(self, mbr: QPolygonF):
+        #Calculate main direction based on longest edge of MAER
+        max_len = 0
+        max_angle = 0
+        
+        #Iterate over all points
+        n = len(mbr)
+        for i in range(n):
+            #Calculate length of edge
+            edge_len = self.distance(mbr[(i+1)%n], mbr[i])
+            #If current edge longer, update longest edge and comupte its angle
+            if edge_len > max_len:
+                max_len = edge_len
+                max_angle = self.computeSlope(mbr[(i+1)%n], mbr[i])
+                
+        return max_angle
+            
+    
+    def evaluation(self, pol:QPolygonF, mbr: QPolygonF):
+        #Evaluate the precision of algorithm
+        #Compute main direction of MAER
+        sigma_rect = self.mainDirection(mbr)
         
         r_sum = 0
+        
+        #Iterate over all points
         n = len(pol)
         for i in range(n):
             dx_i = pol[(i+1)%n].x() - pol[i].x()
@@ -530,16 +553,24 @@ class Algorithms:
             #Compute angle of edge
             sigma_i = atan2(dy_i, dx_i)
             
+            #Multiply by 2/pi
             k_i = 2*sigma_i / pi
-            k_i_r = round(k_i)
+            k_i_r = floor(k_i)
             
-            r_i = (k_i - k_i_r) * pi/2
-            r_edge = r_i - sigma_rect
+            #Compute the remainder
+            r_i = (k_i - k_i_r) * (pi/2)
+            
+            #Oriented remainder 
+            r_edge = abs((r_i - sigma_rect + pi/4) % (pi/2) - pi/4)
+            
+            #Add remainder to sum of remainders
             r_sum += r_edge
             
+        #Mean angle
         d_sigma = pi/(2*n) * r_sum
         
-        return abs(d_sigma) * 180/pi
+        #Return it in degrees
+        return d_sigma * 180/pi
     
     #Set default convex hull algorithm to Jarvis Scan
     ch_method = jarvisScan
