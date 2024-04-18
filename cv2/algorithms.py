@@ -135,7 +135,7 @@ class Algorithms:
         mmb_res = self.resizeRectangle(mmb_unrot, pol)
         
         
-        print(self.evaluation(pol, mmb_res))
+        print(self.evaluation2(pol, mmb_res))
         
         return mmb_res
     
@@ -175,7 +175,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation(pol, er_r))
+        print(self.evaluation2(pol, er_r))
         return er_r
     
     
@@ -211,7 +211,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation(pol, er_r))
+        print(self.evaluation2(pol, er_r))
         return er_r
         
         
@@ -237,7 +237,7 @@ class Algorithms:
             
             #Difference from initial slope
             d_sigma_i = sigma_i-sigma
-            
+                
             #pi/2 multiplication
             k_i = d_sigma_i * 2/pi
             
@@ -269,7 +269,7 @@ class Algorithms:
         er_r = self.resizeRectangle(er, pol)
         
         
-        print(self.evaluation(pol, er_r))
+        print(self.evaluation2(pol, er_r))
         return er_r
     
     
@@ -340,7 +340,7 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation(pol, er_r))
+        print(self.evaluation2(pol, er_r))
         return er_r
      
     
@@ -555,13 +555,13 @@ class Algorithms:
             
             #Multiply by 2/pi
             k_i = 2*sigma_i / pi
-            k_i_r = floor(k_i)
+            k_i_r = round(k_i)
             
             #Compute the remainder
             r_i = (k_i - k_i_r) * (pi/2)
             
             #Oriented remainder 
-            r_edge = abs((r_i - sigma_rect + pi/4) % (pi/2) - pi/4)
+            r_edge = (r_i - sigma_rect + pi/4) % (pi/2) - pi/4
             
             #Add remainder to sum of remainders
             r_sum += r_edge
@@ -569,8 +569,43 @@ class Algorithms:
         #Mean angle
         d_sigma = pi/(2*n) * r_sum
         
-        #Return it in degrees
-        return d_sigma * 180/pi
+        #Compute it in degrees
+        d_sigma_deg = abs(d_sigma * 180/pi)
+        
+        return d_sigma_deg
     
+    def evaluation2(self, pol:QPolygonF, mbr: QPolygonF):
+        sigma_rect = self.mainDirection(mbr)
+        
+        r_sum = 0
+        
+        #Iterate over all points
+        n = len(pol)
+        for i in range(n):
+            dx_i = pol[(i+1)%n].x() - pol[i].x()
+            dy_i = pol[(i+1)%n].y() - pol[i].y()
+            
+            #Compute angle of edge
+            sigma_i = atan2(dy_i, dx_i)
+            
+            #Multiply by 2/pi
+            k_i = 2*sigma_i / pi
+            k_i_r = round(k_i)
+            
+            #Compute the remainder
+            r_i = (k_i - k_i_r) * (pi/2)
+            
+            r_edge = (r_i - sigma_rect)**2
+            
+            #Add remainder to sum of remainders
+            r_sum += r_edge
+        
+        d_sigma = pi/(2*n) * sqrt(r_sum)
+        
+        #Compute it in degrees
+        d_sigma_deg = abs(d_sigma * 180/pi)
+    
+        return d_sigma_deg
+        
     #Set default convex hull algorithm to Jarvis Scan
     ch_method = jarvisScan
