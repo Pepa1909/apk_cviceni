@@ -8,6 +8,7 @@
 
 from PyQt6 import QtCore, QtGui, QtWidgets
 from draw import Draw
+from algorithms import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -125,7 +126,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
         self.actionOpen.triggered.connect(self.openClick) # type: ignore
-        self.actionCreate_DTM.triggered.connect(self.createDTMClick) # type: ignore
+        self.actionCreate_DTM.triggered.connect(self.createDTClick) # type: ignore
         self.actionCreate_contour_lines.triggered.connect(self.createContourLinesClick) # type: ignore
         self.actionAnalyze_slope.triggered.connect(self.analyzeSlopeClick) # type: ignore
         self.actionAnalyze_exposition.triggered.connect(self.analyzeExpositionClick) # type: ignore
@@ -141,8 +142,18 @@ class Ui_MainWindow(object):
     def openClick(self):
         pass
     
-    def createDTMClick(self):
-        pass 
+    def createDTClick(self):
+        #Get points
+        points = self.Canvas.getPoints()
+        #Create Delaunay triangulation
+        a=Algorithms()
+        dt = a.createDT(points)
+        
+        #Update DT
+        self.Canvas.setDT(dt)
+        
+        #Repaint
+        self.Canvas.repaint()
     
     def createContourLinesClick(self):
         pass
@@ -169,7 +180,11 @@ class Ui_MainWindow(object):
         pass
     
     def clearAllClick(self):
-        pass
+        #Clear all data
+        self.Canvas.clearData()
+        
+        #Repaint
+        self.Canvas.repaint()
     
 
     def retranslateUi(self, MainWindow):
