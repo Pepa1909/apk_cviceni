@@ -186,9 +186,16 @@ class Ui_MainWindow(object):
         
         #Simplify all buildings
         a = Algorithms()
+        eval_list = []
+        eval_list2 = []
         for building in building_list:
             maer = a.createMBR(building)
             self.Canvas.mbr_list.append(maer)
+            eval_list.append(a.evaluation(building, maer))
+            eval_list2.append(a.evaluation2(building, maer))
+        #Print effectivnesses
+        print(f"Algorithm effectivness based on mean: {sum(eval_list)/len(eval_list) * 100:.2f} %")
+        print(f"Algorithm efectivness based on squared mean: {sum(eval_list2)/len(eval_list2) * 100:.2f} %")
         
         #Repaint screen
         self.Canvas.repaint()
@@ -210,10 +217,16 @@ class Ui_MainWindow(object):
         
         #Simplify all buildings
         a = Algorithms()
+        eval_list = []
+        eval_list2 = []
         for building in building_list:
             maer = a.createERPCA(building)
             self.Canvas.mbr_list.append(maer)
-        
+            eval_list.append(a.evaluation(building, maer))
+            eval_list2.append(a.evaluation2(building, maer))
+        #Print effectivnesses
+        print(f"Algorithm effectivness based on mean: {sum(eval_list)/len(eval_list) * 100:.2f} %")
+        print(f"Algorithm efectivness based on squared mean: {sum(eval_list2)/len(eval_list2) * 100:.2f} %")
         #Repaint screen
         self.Canvas.repaint()
         
@@ -234,9 +247,16 @@ class Ui_MainWindow(object):
         
         #Simplify all buildings
         a = Algorithms()
+        eval_list = []
+        eval_list2 = []
         for building in building_list:
             maer = a.createLongestEdge(building)
             self.Canvas.mbr_list.append(maer)
+            eval_list.append(a.evaluation(building, maer))
+            eval_list2.append(a.evaluation2(building, maer))
+        #Print effectivnesses
+        print(f"Algorithm effectivness based on mean: {sum(eval_list)/len(eval_list) * 100:.2f} %")
+        print(f"Algorithm efectivness based on squared mean: {sum(eval_list2)/len(eval_list2) * 100:.2f} %")
         
         #Repaint screen
         self.Canvas.repaint()
@@ -258,9 +278,16 @@ class Ui_MainWindow(object):
         
         #Simplify all buildings
         a = Algorithms()
+        eval_list = []
+        eval_list2 = []
         for building in building_list:
             maer = a.createWallAverage(building)
             self.Canvas.mbr_list.append(maer)
+            eval_list.append(a.evaluation(building, maer))
+            eval_list2.append(a.evaluation2(building, maer))
+        #Print effectivnesses
+        print(f"Algorithm effectivness based on mean: {sum(eval_list)/len(eval_list) * 100:.2f} %")
+        print(f"Algorithm efectivness based on squared mean: {sum(eval_list2)/len(eval_list2) * 100:.2f} %")
             
         #Repaint screen
         self.Canvas.repaint()
@@ -282,9 +309,16 @@ class Ui_MainWindow(object):
         
         #Simplify all buildings
         a = Algorithms()
+        eval_list = []
+        eval_list2 = []
         for building in building_list:
             maer = a.createWeightedBisector(building)
             self.Canvas.mbr_list.append(maer)
+            eval_list.append(a.evaluation(building, maer))
+            eval_list2.append(a.evaluation2(building, maer))
+        #Print effectivnesses
+        print(f"Algorithm effectivness based on mean: {sum(eval_list)/len(eval_list) * 100:.2f} %")
+        print(f"Algorithm efectivness based on squared mean: {sum(eval_list2)/len(eval_list2) * 100:.2f} %")
         
         #Repaint screen
         self.Canvas.repaint()

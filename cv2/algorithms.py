@@ -134,9 +134,6 @@ class Algorithms:
         #Resize rectangle
         mmb_res = self.resizeRectangle(mmb_unrot, pol)
         
-        
-        print(self.evaluation2(pol, mmb_res))
-        
         return mmb_res
     
     
@@ -175,7 +172,6 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation2(pol, er_r))
         return er_r
     
     
@@ -211,7 +207,6 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation2(pol, er_r))
         return er_r
         
         
@@ -268,8 +263,6 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        
-        print(self.evaluation2(pol, er_r))
         return er_r
     
     
@@ -340,7 +333,6 @@ class Algorithms:
         #Resize enclosing rectangle
         er_r = self.resizeRectangle(er, pol)
         
-        print(self.evaluation2(pol, er_r))
         return er_r
      
     
@@ -538,7 +530,7 @@ class Algorithms:
             
     
     def evaluation(self, pol:QPolygonF, mbr: QPolygonF):
-        #Evaluate the precision of algorithm
+        #Evaluate the precision of algorithm based on means
         #Compute main direction of MAER
         sigma_rect = self.mainDirection(mbr)
         
@@ -572,9 +564,15 @@ class Algorithms:
         #Compute it in degrees
         d_sigma_deg = abs(d_sigma * 180/pi)
         
-        return d_sigma_deg
+        #Find effective and non-effective bounding rectangles
+        if d_sigma_deg < 10:
+            return 1
+        
+        return 0
     
     def evaluation2(self, pol:QPolygonF, mbr: QPolygonF):
+        #Evaluate the precision of algorithm based on squared means
+        #Compute main direction of MAER
         sigma_rect = self.mainDirection(mbr)
         
         r_sum = 0
@@ -600,12 +598,17 @@ class Algorithms:
             #Add remainder to sum of remainders
             r_sum += r_edge
         
+        #Mean Squared angle
         d_sigma = pi/(2*n) * sqrt(r_sum)
         
         #Compute it in degrees
         d_sigma_deg = abs(d_sigma * 180/pi)
-    
-        return d_sigma_deg
+
+        #Find effective and non-effective bounding rectangles
+        if d_sigma_deg < 10:
+            return 1
+        
+        return 0
         
     #Set default convex hull algorithm to Jarvis Scan
     ch_method = jarvisScan
