@@ -236,11 +236,8 @@ class Algorithms:
             #pi/2 multiplication
             k_i = d_sigma_i * 2/pi
             
-            #Division by 2/pi and rounding to whole number
-            k_i_r = round(k_i)
-            
             #Compute the remainder for segment
-            r_i = (k_i - k_i_r) * pi/2
+            r_i = (k_i - round(k_i)) * pi/2
             
             #Add current remainder to sum of remainders
             r_sum += r_i
@@ -534,6 +531,10 @@ class Algorithms:
         #Compute main direction of MAER
         sigma_rect = self.mainDirection(mbr)
         
+        #Compute k and r of rectangle
+        k = 2 * sigma_rect / pi
+        r = (k - round(k)) * (pi/2)
+        
         r_sum = 0
         
         #Iterate over all points
@@ -546,20 +547,16 @@ class Algorithms:
             sigma_i = atan2(dy_i, dx_i)
             
             #Multiply by 2/pi
-            k_i = 2*sigma_i / pi
-            k_i_r = round(k_i)
+            k_i = 2 * sigma_i / pi
             
             #Compute the remainder
-            r_i = (k_i - k_i_r) * (pi/2)
-            
-            #Oriented remainder 
-            r_edge = (r_i - sigma_rect + pi/4) % (pi/2) - pi/4
+            r_i = (k_i - round(k_i)) * (pi/2)
             
             #Add remainder to sum of remainders
-            r_sum += r_edge
+            r_sum += (r_i - r)
             
         #Mean angle
-        d_sigma = pi/(2*n) * r_sum
+        d_sigma = pi / (2*n) * r_sum
         
         #Compute it in degrees
         d_sigma_deg = abs(d_sigma * 180/pi)
@@ -575,6 +572,10 @@ class Algorithms:
         #Compute main direction of MAER
         sigma_rect = self.mainDirection(mbr)
         
+        #Compute k and r of rectangle
+        k = 2 * sigma_rect / pi
+        r = (k - round(k)) * (pi/2)
+        
         r_sum = 0
         
         #Iterate over all points
@@ -587,19 +588,16 @@ class Algorithms:
             sigma_i = atan2(dy_i, dx_i)
             
             #Multiply by 2/pi
-            k_i = 2*sigma_i / pi
-            k_i_r = round(k_i)
+            k_i = 2 * sigma_i / pi
             
             #Compute the remainder
-            r_i = (k_i - k_i_r) * (pi/2)
-            
-            r_edge = (r_i - sigma_rect)**2
+            r_i = (k_i - round(k_i)) * (pi/2)
             
             #Add remainder to sum of remainders
-            r_sum += r_edge
+            r_sum += (r_i - r)**2
         
         #Mean Squared angle
-        d_sigma = pi/(2*n) * sqrt(r_sum)
+        d_sigma = pi / (2*n) * sqrt(r_sum)
         
         #Compute it in degrees
         d_sigma_deg = abs(d_sigma * 180/pi)
