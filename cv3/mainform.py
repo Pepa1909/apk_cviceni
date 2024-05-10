@@ -210,7 +210,31 @@ class Ui_MainWindow(object):
         self.Canvas.repaint()
     
     def analyzeAspectClick(self):
-        pass 
+        #Get Delaunay triangulation
+        dt = self.Canvas.getDT()
+        a = Algorithms()
+        
+        #Check if DT exists
+        if not dt:
+            #Get points
+            points = self.Canvas.getPoints()
+            
+            #Create DT
+            dt = a.createDT(points)
+            
+            #Set results
+            self.Canvas.setDT(dt)
+        
+        dt = self.Canvas.getDT()
+        
+        #Analyze slope
+        dtm_aspect = a.AnalyzeDTMAspect(dt)
+        
+        #Set slope
+        self.Canvas.setDTMAspect(dtm_aspect)
+        
+        #Repaint screen
+        self.Canvas.repaint()
     
     def viewDTClick(self):
         pass
@@ -229,7 +253,7 @@ class Ui_MainWindow(object):
     
     def clearAllClick(self):
         #Clear all data
-        self.Canvas.clearData()
+        self.Canvas.clearAll()
         
         #Repaint
         self.Canvas.repaint()

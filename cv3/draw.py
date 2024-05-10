@@ -57,7 +57,7 @@ class Draw(QWidget):
             slope = t.getSlope()
             
             #Convert slope to color
-            mju = 255/pi
+            mju = 2*255/pi
             col = int(255 - mju*slope)
             color = QColor(col, col, col)
             qp.setBrush(color)
@@ -65,7 +65,20 @@ class Draw(QWidget):
             #Draw triangle
             qp.drawPolygon(t.getVertices())
         
+        
+        # set graphical attributes
+        qp.setPen(Qt.GlobalColor.gray)
+
         #Draw aspect
+        for t in self.dtm_aspect:
+            aspect = t.getAspect()
+            col = int((aspect+pi)/(2*pi) * 359)%360
+            print(col)
+            color = QColor.fromHsv(col, 255,255)
+            qp.setBrush(color)
+            
+            #Draw triangle
+            qp.drawPolygon(t.getVertices())
                        
         # set graphical attributes
         qp.setPen(Qt.GlobalColor.green)
@@ -107,6 +120,16 @@ class Draw(QWidget):
         # clear polygon
         self.points.clear()
         self.dt.clear()
+        
+        self.repaint()
+    
+    def clearAll(self):
+        # clear polygon
+        self.points.clear()
+        self.dt.clear()
+        self.dtm_aspect.clear()
+        self.dtm_slope.clear()
+        self.contours.clear()
         
         self.repaint()
         
