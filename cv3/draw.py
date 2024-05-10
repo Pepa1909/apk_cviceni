@@ -3,10 +3,12 @@ from PyQt6.QtGui import *
 from PyQt6.QtWidgets import *
 import geopandas as gpd
 import numpy as np
-from math import inf
+from math import *
 from line import *
 from qpoint3df import *
 import algorithms
+from random import *
+from triangle import *
 
 class Draw(QWidget):
 
@@ -14,13 +16,25 @@ class Draw(QWidget):
         super().__init__(*args, **kwargs)
         self.points = []
         self.dt = []
+        self.contours = []
+        self.dtm_slope = []
+        self.dtm_aspect = []
+        self.drawDT = True
+        self.drawContours = True
+        self.drawSlope = True
+        self.drawAspect = True
         
     def mousePressEvent(self, e: QMouseEvent):
         # get coordinates
         x = e.position().x()
         y = e.position().y()
         
-        p = QPointF(x, y)
+        #Set height 
+        zmin = 150
+        zmax = 400
+        z = random() * (zmax - zmin) + zmin
+        
+        p = QPoint3DF(x, y, z)
         
         self.points.append(p)
         
@@ -35,29 +49,48 @@ class Draw(QWidget):
         # start drawing
         qp.begin(self)
         
+        # set graphical attributes
+        qp.setPen(Qt.GlobalColor.gray)
+    
+        #Draw slope
+        for t in self.dtm_slope:
+            slope = t.getSlope()
+            
+            #Convert slope to color
+            mju = 255/pi
+            col = int(255 - mju*slope)
+            color = QColor(col, col, col)
+            qp.setBrush(color)
+            
+            #Draw triangle
+            qp.drawPolygon(t.getVertices())
+        
+        #Draw aspect
+                       
+        # set graphical attributes
+        qp.setPen(Qt.GlobalColor.green)
+        qp.setBrush(Qt.GlobalColor.transparent)
+        
+        #Draw triangulation
+        for e in self.dt:
+            qp.drawLine(int(e.getStart().x()), int(e.getStart().y()), int(e.getEnd().x()), int(e.getEnd().y()))
+        
         # set graphical attributes        
-        qp.setBrush(Qt.GlobalColor.black)
+        qp.setPen(Qt.GlobalColor.red)
+        qp.setBrush(Qt.GlobalColor.yellow)    
+        
+        #Draw countour lines
+        for c in self.contours:
+            qp.drawLine(int(c.getStart().x()), int(c.getStart().y()), int(c.getEnd().x()), int(c.getEnd().y()))
+        
+        # set graphical attributes        
+        qp.setPen(Qt.GlobalColor.black)
         qp.setBrush(Qt.GlobalColor.yellow)
         
         #Draw points
         r = 5
         for p in self.points:
             qp.drawEllipse(int(p.x() - r),int(p.y() - r), 2 * r, 2 * r)
-                       
-        # set graphical attributes
-        qp.setPen(Qt.GlobalColor.green)
-        qp.setBrush(Qt.GlobalColor.transparent)
-        
-        #Draw edges
-        for e in self.dt:
-            qp.drawLine(int(e.getStart().x()), int(e.getStart().y()), int(e.getEnd().x()), int(e.getEnd().y()))
-        
-        #Draw countour lines
-        
-        #Draw slope
-        
-        #Draw aspect
-        
         
         # end drawing
         qp.end()
@@ -65,6 +98,10 @@ class Draw(QWidget):
     def getPoints(self):
         #Return points
         return self.points
+    
+    def getDT(self):
+        #Return DT
+        return self.dt
        
     def clearData(self):
         # clear polygon
@@ -74,4 +111,19 @@ class Draw(QWidget):
         self.repaint()
         
     def setDT(self, dt:list[Edge]):
+        #Set DT
         self.dt = dt
+        
+    def setContours(self, contours):
+        #Set contours
+        self.contours = contours
+        
+    def setDTMSlope(self, dtm_slope:list[Triangle]):
+        #Set slope
+        self.dtm_slope = dtm_slope
+        
+    def setDTMAspect(self, dtm_aspect:list[Triangle]):
+        #Set aspect
+        self.dtm_aspect = dtm_aspect
+    
+    

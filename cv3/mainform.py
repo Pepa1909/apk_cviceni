@@ -129,7 +129,7 @@ class Ui_MainWindow(object):
         self.actionCreate_DTM.triggered.connect(self.createDTClick) # type: ignore
         self.actionCreate_contour_lines.triggered.connect(self.createContourLinesClick) # type: ignore
         self.actionAnalyze_slope.triggered.connect(self.analyzeSlopeClick) # type: ignore
-        self.actionAnalyze_exposition.triggered.connect(self.analyzeExpositionClick) # type: ignore
+        self.actionAnalyze_exposition.triggered.connect(self.analyzeAspectClick) # type: ignore
         self.actionResults.triggered.connect(self.clearResultsClick) # type: ignore
         self.actionClear_all.triggered.connect(self.clearAllClick) # type: ignore
         self.actionDTM.triggered.connect(self.viewDTClick) # type: ignore
@@ -156,12 +156,60 @@ class Ui_MainWindow(object):
         self.Canvas.repaint()
     
     def createContourLinesClick(self):
-        pass
-    
-    def analyzeExpositionClick(self):
-        pass
-    
+        #Get Delaunay triangulation
+        dt = self.Canvas.getDT()
+        a=Algorithms()
+        
+        #Check if DT exists
+        if not dt:
+            #Get points
+            points = self.Canvas.getPoints()
+            
+            #Create DT
+            dt = a.createDT(points)
+            
+            #Set results
+            self.Canvas.setDT(dt)
+        
+        dt = self.Canvas.getDT()
+        
+        #Create contour lines
+        contours = a.createContourLines(dt, 100, 1700, 10)
+        
+        #Set contour lines
+        self.Canvas.setContours(contours)
+        
+        #Repaint screen
+        self.Canvas.repaint()
+        
     def analyzeSlopeClick(self):
+        #Get Delaunay triangulation
+        dt = self.Canvas.getDT()
+        a = Algorithms()
+        
+        #Check if DT exists
+        if not dt:
+            #Get points
+            points = self.Canvas.getPoints()
+            
+            #Create DT
+            dt = a.createDT(points)
+            
+            #Set results
+            self.Canvas.setDT(dt)
+        
+        dt = self.Canvas.getDT()
+        
+        #Analyze slope
+        dtm_slope = a.AnalyzeDTMSlope(dt)
+        
+        #Set slope
+        self.Canvas.setDTMSlope(dtm_slope)
+        
+        #Repaint screen
+        self.Canvas.repaint()
+    
+    def analyzeAspectClick(self):
         pass 
     
     def viewDTClick(self):

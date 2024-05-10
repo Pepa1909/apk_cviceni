@@ -4,18 +4,19 @@ from PyQt6.QtWidgets import *
 from qpoint3df import *
 
 class Triangle:
-    def __init__(self, p1:QPoint3DF, p2:QPoint3DF, p3:QPoint3DF, slope:float, exposition:float):
-        self.p1 = p1
-        self.p2 = p2
-        self.p3 = p3
+    def __init__(self, p1:QPoint3DF, p2:QPoint3DF, p3:QPoint3DF, slope:float, aspect:float):
+        self.vertices = []
+        self.vertices.append(p1)
+        self.vertices.append(p2)
+        self.vertices.append(p3)
         self.slope = slope
-        self.exposition = exposition
+        self.aspect = aspect
         
-    def getP1(self):
-        return self.p1
+    def getVertices(self):
+        return self.vertices
     
-    def getP2(self):
-        return self.p2
+    def getSlope(self):
+        return self.slope
     
-    def getP3(self):
-        return self.p3
+    def getAspect(self):
+        return self.aspect
