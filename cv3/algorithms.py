@@ -192,7 +192,7 @@ class Algorithms:
             z3 = p3.getZ()
             
             #Create all countours
-            for z in range(zmin, zmax, dz):
+            for z in np.arange(zmin, zmax, dz):
                 #Compute height differences of edges
                 dz1 = z - z1
                 dz2 = z - z2

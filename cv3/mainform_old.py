@@ -7,9 +7,8 @@
 
 
 from PyQt6 import QtCore, QtGui, QtWidgets
-from algorithms import *
 from draw import Draw
-from settings import *
+from algorithms import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -34,8 +33,6 @@ class Ui_MainWindow(object):
         self.menuView.setObjectName("menuView")
         self.menuClear = QtWidgets.QMenu(parent=self.menubar)
         self.menuClear.setObjectName("menuClear")
-        self.menuSettings = QtWidgets.QMenu(parent=self.menubar)
-        self.menuSettings.setObjectName("menuSettings")
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QtWidgets.QStatusBar(parent=MainWindow)
         self.statusbar.setObjectName("statusbar")
@@ -95,11 +92,6 @@ class Ui_MainWindow(object):
         icon7.addPixmap(QtGui.QPixmap("images/icons/clear_all.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
         self.actionClear_all.setIcon(icon7)
         self.actionClear_all.setObjectName("actionClear_all")
-        self.actionParameters = QtGui.QAction(parent=MainWindow)
-        icon8 = QtGui.QIcon()
-        icon8.addPixmap(QtGui.QPixmap("images/icons/settings.png"), QtGui.QIcon.Mode.Normal, QtGui.QIcon.State.Off)
-        self.actionParameters.setIcon(icon8)
-        self.actionParameters.setObjectName("actionParameters")
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionExit)
@@ -114,12 +106,10 @@ class Ui_MainWindow(object):
         self.menuView.addAction(self.actionExposition)
         self.menuClear.addAction(self.actionResults)
         self.menuClear.addAction(self.actionClear_all)
-        self.menuSettings.addAction(self.actionParameters)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuAnalysis.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuClear.menuAction())
-        self.menubar.addAction(self.menuSettings.menuAction())
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionCreate_DTM)
@@ -132,14 +122,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionResults)
         self.toolBar.addAction(self.actionClear_all)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionParameters)
-        self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionExit)
-
-        #Settings 
-        self.settings = QtWidgets.QDialog()
-        self.ui = Ui_Dialog()
-        self.ui.setupUi(self.settings)
 
         self.retranslateUi(MainWindow)
         self.actionOpen.triggered.connect(self.openClick) # type: ignore
@@ -152,11 +135,10 @@ class Ui_MainWindow(object):
         self.actionDTM.triggered.connect(self.viewDTClick) # type: ignore
         self.actionCountour_lines.triggered.connect(self.viewContourLinesClick) # type: ignore
         self.actionSlope.triggered.connect(self.viewSlopeClick) # type: ignore
-        self.actionExposition.triggered.connect(self.viewAspectClick) # type: ignore
-        self.actionExit.triggered.connect(MainWindow.close) # type: ignore       
-        self.actionParameters.triggered.connect(self.setParametersClick) # type: ignore
+        self.actionExposition.triggered.connect(self.viewExpositionClick) # type: ignore
+        self.actionExit.triggered.connect(MainWindow.close) # type: ignore        
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+        
     def openClick(self):
         pass
     
@@ -172,9 +154,6 @@ class Ui_MainWindow(object):
         
         #Repaint
         self.Canvas.repaint()
-        
-        #Check menu item
-        self.actionDTM.setChecked(True)
     
     def createContourLinesClick(self):
         #Get Delaunay triangulation
@@ -194,22 +173,14 @@ class Ui_MainWindow(object):
         
         dt = self.Canvas.getDT()
         
-        #Get contour lines parameters
-        zmin = float(self.ui.lineEdit.text())
-        zmax = float(self.ui.lineEdit_2.text())
-        dz = float(self.ui.lineEdit_3.text())
-        
         #Create contour lines
-        contours = a.createContourLines(dt, zmin, zmax, dz)
+        contours = a.createContourLines(dt, 100, 1700, 10)
         
         #Set contour lines
         self.Canvas.setContours(contours)
         
         #Repaint screen
         self.Canvas.repaint()
-        
-        #Check menu item
-        self.actionCountour_lines.setChecked(True)
         
     def analyzeSlopeClick(self):
         #Get Delaunay triangulation
@@ -237,9 +208,6 @@ class Ui_MainWindow(object):
         
         #Repaint screen
         self.Canvas.repaint()
-        
-        #Check menu item
-        self.actionSlope.setChecked(True)
     
     def analyzeAspectClick(self):
         #Get Delaunay triangulation
@@ -259,43 +227,29 @@ class Ui_MainWindow(object):
         
         dt = self.Canvas.getDT()
         
-        #Analyze aspect
+        #Analyze slope
         dtm_aspect = a.AnalyzeDTMAspect(dt)
         
-        #Set aspect
+        #Set slope
         self.Canvas.setDTMAspect(dtm_aspect)
         
         #Repaint screen
         self.Canvas.repaint()
-        
-        #Check menu item
-        self.actionExposition.setChecked(True)
     
     def viewDTClick(self):
-        self.Canvas.setViewDT(self.actionDTM.isChecked())
-        self.Canvas.update()
+        pass
     
     def viewContourLinesClick(self):
-        self.Canvas.setViewContours(self.actionCountour_lines.isChecked())
-        self.Canvas.update()
+        pass
     
     def viewSlopeClick(self):
-        self.Canvas.setViewSlope(self.actionSlope.isChecked())
-        self.Canvas.update()
+        pass
     
-    def viewAspectClick(self):
-        self.Canvas.setViewAspect(self.actionExposition.isChecked())
-        self.Canvas.update()
-    
-    def setParametersClick(self):
-        self.settings.show()
+    def viewExpositionClick(self):
+        pass
     
     def clearResultsClick(self):
-        #Clear results
-        self.Canvas.clearResults()
-        
-        #Repaint
-        self.Canvas.repaint()
+        pass
     
     def clearAllClick(self):
         #Clear all data
@@ -303,6 +257,7 @@ class Ui_MainWindow(object):
         
         #Repaint
         self.Canvas.repaint()
+    
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -311,7 +266,6 @@ class Ui_MainWindow(object):
         self.menuAnalysis.setTitle(_translate("MainWindow", "Analysis"))
         self.menuView.setTitle(_translate("MainWindow", "View"))
         self.menuClear.setTitle(_translate("MainWindow", "Clear"))
-        self.menuSettings.setTitle(_translate("MainWindow", "Settings"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
         self.actionOpen.setText(_translate("MainWindow", "Open"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
@@ -325,9 +279,6 @@ class Ui_MainWindow(object):
         self.actionExposition.setText(_translate("MainWindow", "Exposition"))
         self.actionResults.setText(_translate("MainWindow", "Clear results"))
         self.actionClear_all.setText(_translate("MainWindow", "Clear all"))
-        self.actionParameters.setText(_translate("MainWindow", "Parameters"))
-        self.actionParameters.setToolTip(_translate("MainWindow", "Settings"))
-
 
 if __name__ == "__main__":
     import sys

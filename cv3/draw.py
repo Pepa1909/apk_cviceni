@@ -19,10 +19,10 @@ class Draw(QWidget):
         self.contours = []
         self.dtm_slope = []
         self.dtm_aspect = []
-        self.drawDT = True
-        self.drawContours = True
-        self.drawSlope = True
-        self.drawAspect = True
+        self.viewDT = True
+        self.viewContours = True
+        self.viewSlope = True
+        self.viewAspect = True
         
     def mousePressEvent(self, e: QMouseEvent):
         # get coordinates
@@ -49,53 +49,59 @@ class Draw(QWidget):
         # start drawing
         qp.begin(self)
         
+        if self.viewSlope:
         # set graphical attributes
-        qp.setPen(Qt.GlobalColor.gray)
+            qp.setPen(Qt.GlobalColor.gray)
     
         #Draw slope
-        for t in self.dtm_slope:
-            slope = t.getSlope()
-            
-            #Convert slope to color
-            mju = 2*255/pi
-            col = int(255 - mju*slope)
-            color = QColor(col, col, col)
-            qp.setBrush(color)
-            
-            #Draw triangle
-            qp.drawPolygon(t.getVertices())
+        
+            for t in self.dtm_slope:
+                slope = t.getSlope()
+                
+                #Convert slope to color
+                mju = 2*255/pi
+                col = int(255 - mju*slope)
+                color = QColor(col, col, col)
+                qp.setBrush(color)
+                
+                #Draw triangle
+                qp.drawPolygon(t.getVertices())
         
         
+        if self.viewAspect:
         # set graphical attributes
-        qp.setPen(Qt.GlobalColor.gray)
+            qp.setPen(Qt.GlobalColor.gray)
 
         #Draw aspect
-        for t in self.dtm_aspect:
-            aspect = t.getAspect()
-            col = int((aspect+pi)/(2*pi) * 359)%360
-            print(col)
-            color = QColor.fromHsv(col, 255,255)
-            qp.setBrush(color)
-            
-            #Draw triangle
-            qp.drawPolygon(t.getVertices())
+        
+            for t in self.dtm_aspect:
+                aspect = t.getAspect()
+                col = int((aspect+pi)/(2*pi) * 359)%360
+                print(col)
+                color = QColor.fromHsv(col, 255,255)
+                qp.setBrush(color)
+                
+                #Draw triangle
+                qp.drawPolygon(t.getVertices())
                        
-        # set graphical attributes
-        qp.setPen(Qt.GlobalColor.green)
-        qp.setBrush(Qt.GlobalColor.transparent)
+        if self.viewDT:
+            # set graphical attributes
+            qp.setPen(Qt.GlobalColor.green)
+            qp.setBrush(Qt.GlobalColor.transparent)
+            
+            #Draw triangulation
+            for e in self.dt:
+                qp.drawLine(int(e.getStart().x()), int(e.getStart().y()), int(e.getEnd().x()), int(e.getEnd().y()))
         
-        #Draw triangulation
-        for e in self.dt:
-            qp.drawLine(int(e.getStart().x()), int(e.getStart().y()), int(e.getEnd().x()), int(e.getEnd().y()))
-        
-        # set graphical attributes        
-        qp.setPen(Qt.GlobalColor.red)
-        qp.setBrush(Qt.GlobalColor.yellow)    
-        
-        #Draw countour lines
-        for c in self.contours:
-            qp.drawLine(int(c.getStart().x()), int(c.getStart().y()), int(c.getEnd().x()), int(c.getEnd().y()))
-        
+        if self.viewContours:
+            # set graphical attributes        
+            qp.setPen(Qt.GlobalColor.red)
+            qp.setBrush(Qt.GlobalColor.yellow)    
+            
+            #Draw countour lines
+            for c in self.contours:
+                qp.drawLine(int(c.getStart().x()), int(c.getStart().y()), int(c.getEnd().x()), int(c.getEnd().y()))
+            
         # set graphical attributes        
         qp.setPen(Qt.GlobalColor.black)
         qp.setBrush(Qt.GlobalColor.yellow)
@@ -116,10 +122,12 @@ class Draw(QWidget):
         #Return DT
         return self.dt
        
-    def clearData(self):
+    def clearResults(self):
         # clear polygon
-        self.points.clear()
         self.dt.clear()
+        self.dtm_aspect.clear()
+        self.dtm_slope.clear()
+        self.contours.clear()
         
         self.repaint()
     
@@ -132,7 +140,8 @@ class Draw(QWidget):
         self.contours.clear()
         
         self.repaint()
-        
+            
+    
     def setDT(self, dt:list[Edge]):
         #Set DT
         self.dt = dt
@@ -149,4 +158,14 @@ class Draw(QWidget):
         #Set aspect
         self.dtm_aspect = dtm_aspect
     
+    def setViewDT(self, viewDT):
+        self.viewDT = viewDT
     
+    def setViewSlope(self, viewSlope):
+        self.viewSlope = viewSlope
+    
+    def setViewAspect(self, viewAspect):
+        self.viewAspect = viewAspect
+    
+    def setViewContours(self, viewContours):
+        self.viewContours = viewContours
